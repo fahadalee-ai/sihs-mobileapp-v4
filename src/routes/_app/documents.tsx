@@ -15,7 +15,7 @@ function Documents() {
         <p className="text-sm text-muted-foreground">
           Only documents SIH&S marks customer-visible appear here ({CUSTOMER_CONFIG.documentCategories.join(", ")}). Testing, DNA, medical, claim, and investigation files are not listed.
         </p>
-        <p className="rounded-[16px] border border-dashed border-white/20 bg-[#06281f] p-4 text-sm text-[#f4f7f5]">
+        <p className="rounded-lg border border-dashed border-[#e5e7eb] bg-white p-4 text-sm text-[#171717]">
           No customer-visible documents yet.
         </p>
       </div>

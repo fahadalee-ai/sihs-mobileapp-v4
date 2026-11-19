@@ -17,7 +17,7 @@ export function TabBar() {
   return (
     <nav
       aria-label="Primary"
-      className="sticky bottom-0 z-40 grid grid-cols-4 border-t border-[#4eae34] bg-[#5fbb3f] pb-[max(0.25rem,env(safe-area-inset-bottom))] text-[#001e16]"
+      className="sticky bottom-0 z-40 grid grid-cols-4 bg-[#0d3b2a] pb-[max(0.25rem,env(safe-area-inset-bottom))] text-white"
     >
       {TABS.map((tab) => {
         const active = pathname === tab.to;
@@ -27,17 +27,13 @@ export function TabBar() {
             key={tab.to}
             to={tab.to}
             aria-current={active ? "page" : undefined}
-            className="flex min-h-14 flex-col items-center justify-center gap-0.5 text-[11px] font-semibold text-[#001e16]"
+            className={cn(
+              "flex min-h-14 flex-col items-center justify-center gap-0.5 text-[11px] font-semibold",
+              active ? "text-[#f5c518]" : "text-white/85",
+            )}
           >
-            <span
-              className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-full",
-                active ? "bg-[#001e16] text-[#5fbb3f]" : "text-[#001e16]/75",
-              )}
-            >
-              <Icon size={20} aria-hidden />
-            </span>
-            <span className={active ? "text-[#001e16]" : "text-[#001e16]/70"}>{tab.label}</span>
+            <Icon size={22} aria-hidden />
+            {tab.label}
           </Link>
         );
       })}
@@ -48,7 +44,6 @@ export function TabBar() {
 export function ScreenHeader({
   title,
   backTo = "/home",
-  dark,
   menu,
 }: {
   title: string;
@@ -59,13 +54,7 @@ export function ScreenHeader({
   const router = useRouter();
   const canGoBack = useCanGoBack();
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-30 flex items-center gap-2 px-3 pt-[max(0.5rem,env(safe-area-inset-top))] pb-3",
-        "bg-[#001e16]",
-        dark ? "text-white" : "text-[#f4f7f5]",
-      )}
-    >
+    <header className="sticky top-0 z-30 flex items-center gap-2 border-b border-[#eeeeee] bg-white px-3 pt-[max(0.5rem,env(safe-area-inset-top))] pb-3 text-[#171717]">
       <button
         type="button"
         aria-label="Go back"
@@ -80,14 +69,13 @@ export function ScreenHeader({
   );
 }
 
-export function CallHook({ dark }: { dark?: boolean }) {
+export function CallHook({ dark }: { dark?: boolean } = {}) {
   return (
     <a
       href={`tel:${PHONE_TEL}`}
-      className={cn(
-        "flex min-h-11 items-center justify-center gap-2 text-sm font-semibold underline-offset-2 hover:underline",
-        dark ? "text-[#8fd86f]" : "text-accent-text",
-      )}
+      className={`flex min-h-11 items-center justify-center gap-2 text-sm font-semibold underline-offset-2 hover:underline ${
+        dark ? "text-[#b6f5a0]" : "text-[#5cba40]"
+      }`}
     >
       <Phone size={18} aria-hidden />
       {PHONE_DISPLAY}
@@ -95,9 +83,9 @@ export function CallHook({ dark }: { dark?: boolean }) {
   );
 }
 
-export function LegalLinks({ dark }: { dark?: boolean }) {
+export function LegalLinks(_props?: { dark?: boolean }) {
   return (
-    <ul className={cn("space-y-2 text-sm", dark ? "text-[#c5d4cc]" : "text-foreground")}>
+    <ul className="space-y-2 text-sm text-[#171717]">
       {LEGAL_LINKS.map((link) => (
         <li key={link.id}>
           <Link
@@ -123,10 +111,10 @@ export function Toasts() {
           key={t.id}
           type="button"
           onClick={() => dismissToast(t.id)}
-          className="pointer-events-auto rounded-md bg-[#5fbb3f] px-4 py-3 text-left text-sm text-[#001e16] shadow"
+          className="pointer-events-auto rounded-md bg-[#5cba40] px-4 py-3 text-left text-sm text-white shadow"
         >
           <span className="font-semibold">{t.title}</span>
-          {t.body && <span className="mt-0.5 block text-[#001e16]/80">{t.body}</span>}
+          {t.body && <span className="mt-0.5 block text-white/90">{t.body}</span>}
         </button>
       ))}
     </div>

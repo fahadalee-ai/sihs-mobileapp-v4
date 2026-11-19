@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { CallHook, ScreenHeader } from "@/components/Chrome";
+import { DemoBadge, SampleTag } from "@/components/Marks";
 import { Button } from "@/components/kit";
 import { RESTRICTED_MEDIA_SLUGS, customerStatusLabel } from "@/lib/customer-config";
 import { DEPOSIT_EARNED, REFUND_LINE } from "@/lib/content";
@@ -11,6 +12,11 @@ import jumpPhoto from "@/img/photo-jump.jpg";
 import fuelPhoto from "@/img/photo-fuel.jpg";
 import afterTow from "@/img/bg-tow.jpg";
 import afterRoad from "@/img/bg-onboard-tow.jpg";
+import iconCourier from "@/img/Services_09-Courier-Transport.png";
+import iconCleaning from "@/img/Services_010-Cleaning.png";
+import iconProperty from "@/img/Services_011-Property-Work.png";
+import iconSupplies from "@/img/Services_012-Supplies.png";
+import iconContracted from "@/img/Services_013-Contracted-Service.png";
 
 export const Route = createFileRoute("/_app/requests/$id")({
   head: () => ({ meta: [{ title: "SIH&S — Request" }] }),
@@ -22,6 +28,14 @@ const JOB_PHOTOS: Record<string, [string, string]> = {
   lockouts: [lockoutPhoto, afterRoad],
   "jump-starts": [jumpPhoto, afterRoad],
   "fuel-delivery": [fuelPhoto, afterTow],
+  courier: [iconCourier, iconCourier],
+  transport: [iconCourier, iconCourier],
+  cleaning: [iconCleaning, iconCleaning],
+  janitorial: [iconCleaning, iconCleaning],
+  lawn: [iconProperty, iconProperty],
+  lawncare: [iconProperty, iconProperty],
+  supplies: [iconSupplies, iconSupplies],
+  other: [iconContracted, iconContracted],
 };
 
 function formatStamp(iso?: string) {
@@ -30,7 +44,7 @@ function formatStamp(iso?: string) {
   if (Number.isNaN(date.getTime())) return null;
   return {
     date: date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }),
-    time: date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }),
+    time: date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit", timeZoneName: "short" }),
   };
 }
 
@@ -78,17 +92,24 @@ function RequestDetail() {
   const booking = bookings.find((item) => item.id === id);
   const [cancelOpen, setCancelOpen] = useState(false);
   const [issue, setIssue] = useState("");
+  const [updatesOpen, setUpdatesOpen] = useState(false);
 
   if (!booking) {
     return (
       <div>
-        <ScreenHeader title="Request" backTo="/bookings" />
-        <p className="px-4 text-sm">You don't have access to this record. Contact SIH&S.</p>
-        <div className="px-4 pt-4">
-          <CallHook />
-          <Button type="button" variant="outline" full className="mt-3" onClick={() => navigate({ to: "/home" })}>
-            Return Home
-          </Button>
+        <ScreenHeader title="Job detail" backTo="/bookings" />
+        <div className="px-4 pb-8">
+          <SampleTag />
+          <section className="mt-4 rounded-2xl border border-[#e5e7eb] bg-white p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#6b7280]">Request number</p>
+            <p className="mt-1 text-2xl font-semibold tracking-tight">{id}</p>
+            <h2 className="mt-3 text-lg font-semibold">You don't have access to this record.</h2>
+            <p className="mt-2 text-sm leading-relaxed text-[#6b7280]">Contact the office if this job belongs to your organization or site.</p>
+            <div className="mt-4">
+              <CallHook />
+            </div>
+            <Button type="button" full className="mt-2" onClick={() => navigate({ to: "/home" })}>Return home</Button>
+          </section>
         </div>
       </div>
     );
@@ -114,30 +135,90 @@ function RequestDetail() {
     ? booking.statusHistory
     : [{ at: "", label, source: "customer" as const }];
   const notes = staffNotes(booking);
+  const milestones = [
+    ["Assigned", "9:00 AM ET"],
+    ["Acknowledged", "9:05 AM ET"],
+    ["En Route", "9:12 AM ET"],
+    ["Arrived", "9:40 AM ET"],
+    ["Work Started", "9:48 AM ET"],
+    ["Service Completed", "10:10 AM ET"],
+    ["Departed", "10:18 AM ET"],
+  ] as const;
+  const reached = completed ? milestones.length : booking.status === "ongoing" ? 4 : 0;
+  const statuses = [
+    ["Delivery proof", completed ? "Photos on file" : "Not released"],
+    ["Customer satisfaction", "Awaiting sign-off"],
+    ["Contract acceptance", "Separate record"],
+    ["Financial closeout", booking.depositPaid ? "Deposit paid" : "Billing open"],
+  ] as const;
 
   return (
     <div>
-      <ScreenHeader title="Request" backTo="/bookings" />
+      <ScreenHeader title="Job detail" backTo="/bookings" />
       <div className="space-y-4 px-4 pb-8 text-sm">
-        <div>
-          <p className="text-muted-foreground">Request {booking.id}</p>
-          <h2 className="text-xl font-semibold">{booking.serviceTitle}</h2>
-          <p className="mt-2 inline-flex rounded-md bg-[#5fbb3f] px-2 py-1 text-xs font-semibold text-[#001e16]">{label}</p>
-        </div>
+        <SampleTag />
+        <section className="rounded-2xl border border-[#e5e7eb] bg-white p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#6b7280]">Request number</p>
+          <p className="mt-1 text-2xl font-semibold tracking-tight">{booking.id}</p>
+          <h2 className="mt-2 text-lg font-semibold">{booking.serviceTitle}</h2>
+          <p className="mt-3 inline-flex min-h-8 items-center rounded-lg bg-[#5cba40] px-3 text-xs font-semibold text-white">{label}</p>
+          <p className="mt-3 leading-relaxed text-[#6b7280]">{booking.when}</p>
+          <p className="mt-2 leading-relaxed">Service Completed and Departed do not close this job. Follow-on status: Awaiting your review / sign-off.</p>
+        </section>
 
-        <section className="rounded-[16px] border border-white/15 bg-[#06281f] p-3">
+        <section className="rounded-2xl border border-[#e5e7eb] bg-white p-4">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="font-semibold">Milestones</h3>
+            <DemoBadge />
+          </div>
+          <ol className="mt-3">
+            {milestones.map(([name, time], index) => {
+              const done = index < reached;
+              return (
+                <li key={name} className="flex gap-3">
+                  <div className="flex flex-col items-center">
+                    <span className={`mt-1 h-3 w-3 rounded-full ${done ? "bg-[#5cba40]" : "border-2 border-[#d1d5db] bg-white"}`} />
+                    {index < milestones.length - 1 && <span className="w-px flex-1 bg-[#e5e7eb]" />}
+                  </div>
+                  <div className="pb-4">
+                    <p className="font-semibold">{name}</p>
+                    <p className="text-[#6b7280]">{done ? time : "Not yet"}</p>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+          <p className="text-[#6b7280]">Interrupted, Canceled, and Unsuccessful stay separate from Completed.</p>
+          <button type="button" className="mt-2 min-h-11 font-semibold text-[#5cba40]" onClick={() => setUpdatesOpen((open) => !open)}>
+            {updatesOpen ? "Hide update details" : "Update details"}
+          </button>
+          {updatesOpen && (
+            <p className="mt-1 leading-relaxed text-[#6b7280]">Updated by crew device — automatic. Sample: Time corrected by office. Reason: the device clock was 4 minutes fast.</p>
+          )}
+        </section>
+
+        <section className="grid grid-cols-2 gap-2">
+          {statuses.map(([name, value]) => (
+            <article key={name} className="rounded-2xl border border-[#e5e7eb] bg-white p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#6b7280]">{name}</p>
+              <p className="mt-2 font-semibold">{value}</p>
+            </article>
+          ))}
+        </section>
+
+        <section className="rounded-2xl border border-[#e5e7eb] bg-white p-4">
           <h3 className="font-semibold">{completed ? "Completed job" : canceled ? "Canceled job" : "Request record"}</h3>
           <dl className="mt-3 space-y-2">
             {facts.map(([name, value]) => (
               <div key={name}>
-                <dt className="text-xs font-semibold uppercase tracking-wide text-[#8fd86f]">{name}</dt>
+                <dt className="text-xs font-semibold uppercase tracking-wide text-[#5cba40]">{name}</dt>
                 <dd className="mt-0.5">{value}</dd>
               </div>
             ))}
           </dl>
-          {booking.scope && <p className="mt-3 border-t border-white/10 pt-3">{booking.scope}</p>}
+          {booking.scope && <p className="mt-3 border-t border-[#eeeeee] pt-3">{booking.scope}</p>}
           {canceled && (
-            <div className="mt-3 space-y-1 border-t border-white/10 pt-3">
+            <div className="mt-3 space-y-1 border-t border-[#eeeeee] pt-3">
               <p>Reason: {booking.cancelReason || "Not recorded"}</p>
               <p>{REFUND_LINE}</p>
               {booking.depositDispatched && <p>{DEPOSIT_EARNED}</p>}
@@ -145,61 +226,61 @@ function RequestDetail() {
           )}
         </section>
 
-        <section>
-          <h3 className="text-base font-semibold">Status timeline</h3>
+        <section className="rounded-2xl border border-[#e5e7eb] bg-white p-4">
+          <h3 className="font-semibold">Status timeline</h3>
           <ol className="mt-3 space-y-0">
             {history.map((event, index) => {
               const stamp = formatStamp(event.at);
               return (
-                <li key={`${event.at}${event.label}${index}`} className="relative border-l border-white/15 pb-4 pl-4 last:pb-0">
-                  <span className="absolute -left-[5px] top-1 h-2.5 w-2.5 rounded-full bg-[#5fbb3f]" aria-hidden />
+                <li key={`${event.at}${event.label}${index}`} className="relative border-l border-[#e5e7eb] pb-4 pl-4 last:pb-0">
+                  <span className="absolute -left-[5px] top-1 h-2.5 w-2.5 rounded-full bg-[#5cba40]" aria-hidden />
                   <p className="font-semibold">{event.label}</p>
-                  <p className="text-[#f4f7f5]">{stamp ? `${stamp.date} · ${stamp.time}` : "Date and time not recorded"}</p>
-                  <p className="text-xs text-[#c5d4cc]">{event.source === "customer" ? "Customer entered" : "SIH&S"}</p>
+                  <p className="text-[#171717]">{stamp ? `${stamp.date} · ${stamp.time}` : "Date and time not recorded"}</p>
+                  <p className="text-xs text-[#6b7280]">{event.source === "customer" ? "Customer entered" : "SIH&S"}</p>
                 </li>
               );
             })}
           </ol>
         </section>
 
-        <section>
-          <h3 className="text-base font-semibold">Job photos</h3>
-          <p className="mt-1 text-xs text-[#c5d4cc]">Before and after photos are kept on completed jobs.</p>
+        <section className="rounded-2xl border border-[#e5e7eb] bg-white p-4">
+          <h3 className="font-semibold">Job photos</h3>
+          <p className="mt-1 text-xs text-[#6b7280]">Before and after photos are kept on completed jobs.</p>
           {restricted ? (
-            <p className="mt-3 rounded-[16px] border border-white/15 bg-[#06281f] p-3">Photos are not stored for this service.</p>
+            <p className="mt-3 rounded-lg border border-[#e5e7eb] bg-white p-3">Photos are not stored for this service.</p>
           ) : booking.photoState === "sample" && completed ? (
             <div className="mt-3 grid grid-cols-2 gap-3">
               {[
                 ["Before", photos[0]],
                 ["After", photos[1]],
               ].map(([caption, src]) => (
-                <figure key={caption} className="overflow-hidden rounded-[16px] border border-white/15 bg-[#06281f]">
-                  <img src={src} alt={`${caption} sample photo for ${booking.serviceTitle}`} className="h-36 w-full object-cover" />
-                  <figcaption className="px-2 py-2 text-xs font-semibold uppercase tracking-wide text-[#8fd86f]">{caption} · sample</figcaption>
+                <figure key={caption} className="overflow-hidden rounded-lg border border-[#e5e7eb] bg-white">
+                  <img src={src} alt={`${caption} sample photo for ${booking.serviceTitle}`} className={`h-36 w-full ${photos[0] === photos[1] ? "bg-[#f3f4f6] object-contain p-3" : "object-cover"}`} />
+                  <figcaption className="px-2 py-2 text-xs font-semibold uppercase tracking-wide text-[#5cba40]">{caption} · sample</figcaption>
                 </figure>
               ))}
             </div>
           ) : (booking.photoCount ?? 0) > 0 ? (
-            <p className="mt-3 rounded-[16px] border border-white/15 bg-[#06281f] p-3">
+            <p className="mt-3 rounded-lg border border-[#e5e7eb] bg-white p-3">
               {booking.photoCount} photos or videos were submitted with this request.
             </p>
           ) : (
-            <p className="mt-3 rounded-[16px] border border-dashed border-white/20 bg-[#06281f] p-3 text-[#c5d4cc]">
+            <p className="mt-3 rounded-lg border border-dashed border-[#e5e7eb] bg-white p-3 text-[#6b7280]">
               {canceled ? "This job was canceled. Before and after photos were not taken." : completed ? "No before or after photos are on this job." : "Before and after photos are added when SIH&S marks the job completed."}
             </p>
           )}
         </section>
 
-        <section>
-          <h3 className="text-base font-semibold">Staff notes</h3>
+        <section className="rounded-2xl border border-[#e5e7eb] bg-white p-4">
+          <h3 className="font-semibold">Staff notes</h3>
           <ol className="mt-3 space-y-2">
             {notes.map((note, index) => {
               const stamp = formatStamp(note.at);
               return (
-                <li key={`${note.body}${index}`} className="rounded-[16px] border border-white/15 bg-[#06281f] p-3">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-[#8fd86f]">{note.author}</p>
+                <li key={`${note.body}${index}`} className="rounded-lg border border-[#e5e7eb] bg-white p-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[#5cba40]">{note.author}</p>
                   <p className="mt-1">{note.body}</p>
-                  <p className="mt-2 text-xs text-[#c5d4cc]">{stamp ? `${stamp.date} · ${stamp.time}` : "Date and time not recorded"}</p>
+                  <p className="mt-2 text-xs text-[#6b7280]">{stamp ? `${stamp.date} · ${stamp.time}` : "Date and time not recorded"}</p>
                 </li>
               );
             })}
@@ -219,7 +300,7 @@ function RequestDetail() {
           )}
         </section>
 
-        <p className="text-sm text-[#c5d4cc]">Status changes stay on the timeline above. A later change to the place, time, or scope is added there and the original request stays on this record.</p>
+        <p className="text-sm text-[#6b7280]">Status changes stay on the timeline above. A later change to the place, time, or scope is added there and the original request stays on this record.</p>
 
         <section className="rounded-md border border-border bg-card p-3">
           <h3 className="font-semibold">Linked work</h3>
@@ -280,7 +361,7 @@ function RequestDetail() {
                 <option>Return</option>
               </select>
             </label>
-            <Button type="button" variant="outline" full className="mt-2" disabled={!issue} onClick={() => reportDeliveryIssue(booking.id, issue)}>
+            <Button type="button" variant="outline" full className="mt-2" onClick={() => reportDeliveryIssue(booking.id, issue || "Issue reported")}>
               Report an Issue
             </Button>
           </section>
@@ -301,10 +382,10 @@ function RequestDetail() {
       </div>
       {cancelOpen && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50" role="dialog" aria-modal="true">
-          <div className="w-full max-w-[480px] rounded-t-[16px] bg-[#06281f] p-4">
+          <div className="w-full max-w-[480px] rounded-t-lg bg-white p-4">
             <h2 className="text-xl font-semibold">Request Cancellation</h2>
             <Button type="button" full className="mt-4" onClick={() => { cancelBooking(booking.id); setCancelOpen(false); }}>Request Cancellation</Button>
-            <button type="button" className="mt-2 min-h-11 w-full" onClick={() => setCancelOpen(false)}>Keep request</button>
+            <button type="button" className="mt-2 min-h-11 w-full rounded-lg" onClick={() => setCancelOpen(false)}>Keep request</button>
           </div>
         </div>
       )}

@@ -31,7 +31,7 @@ function Deposit() {
     <div>
       <ScreenHeader title="Deposit" />
       <div className="px-4 pb-8">
-        <p className="rounded-md bg-[#5fbb3f] p-3 text-sm font-semibold text-[#001e16]">{PRICING_APPOINTMENT}</p>
+        <p className="rounded-md bg-[#5cba40] p-3 text-sm font-semibold text-white">{PRICING_APPOINTMENT}</p>
         <p className="mt-3 text-sm">A deposit is shown on the request after SIH&S confirms it. Submitting a request does not open checkout.</p>
         <p className="mt-3 text-sm">{service.title}</p>
 

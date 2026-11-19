@@ -13,7 +13,7 @@ function LegalDoc() {
   const { doc } = Route.useParams();
   if (!isLegalId(doc)) {
     return (
-      <div className="theme-dark min-h-dvh bg-brand text-white">
+      <div className="min-h-dvh bg-white text-[#171717]">
         <ScreenHeader title="Legal" backTo="/login" dark />
         <p className="px-4">That document is not available.</p>
       </div>
@@ -21,13 +21,13 @@ function LegalDoc() {
   }
   const page = LEGAL[doc];
   return (
-    <div className="theme-dark min-h-dvh bg-brand text-white">
+    <div className="min-h-dvh bg-white text-[#171717]">
       <ScreenHeader title={page.title} backTo="/profile" dark />
-      <article className="space-y-4 px-4 pb-10 text-sm leading-relaxed text-[#f4f7f5]">
+      <article className="space-y-4 px-4 pb-10 text-sm leading-relaxed text-[#171717]">
         {page.paragraphs.map((p) => (
           <p key={p}>{p}</p>
         ))}
-        <p className="text-xs text-[#c5d4cc]">{PATENT_FOOTNOTE}</p>
+        <p className="text-xs text-[#6b7280]">{PATENT_FOOTNOTE}</p>
         <h2 className="pt-2 text-base font-semibold">Related documents</h2>
         <LegalLinks dark />
       </article>

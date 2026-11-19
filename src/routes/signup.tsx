@@ -22,7 +22,7 @@ function SignUp() {
   const [sms, setSms] = useState(false);
 
   return (
-    <div className="theme-dark min-h-dvh bg-brand text-white">
+    <div className="min-h-dvh bg-white text-[#171717]">
       <ScreenHeader title="Sign Up" backTo="/login" dark />
       <form
         className="px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
@@ -46,7 +46,7 @@ function SignUp() {
         }}
       >
         <Field label="Full Name">
-          <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Susan Hooks" autoComplete="name" />
+          <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Avery Sample" autoComplete="name" />
         </Field>
         <Field label="Email">
           <Input type="text" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@email.com" autoComplete="email" />
@@ -57,21 +57,21 @@ function SignUp() {
             autoComplete="tel"
             value={phone}
             onChange={(e) => setPhone(formatPhone(e.target.value))}
-            placeholder="(302) 481-4656"
+            placeholder="(555) 010-0199"
           />
         </Field>
         <Field label="Password">
           <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" placeholder="Create a password" />
         </Field>
         <Field label="Address (optional)">
-          <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Wilmington, DE" autoComplete="street-address" />
+          <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="100 Demo Lane, Sample City" autoComplete="street-address" />
         </Field>
 
         <label className="mb-3 flex min-h-11 items-start gap-3 text-sm leading-relaxed">
           <input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} className="mt-1 h-5 w-5" />
           <span>
             I accept the{" "}
-            <Link to="/legal/$doc" params={{ doc: "terms" }} className="font-semibold text-[#8fd86f] underline">
+            <Link to="/legal/$doc" params={{ doc: "terms" }} className="font-semibold text-[#5cba40] underline">
               Full Terms & Agreement
             </Link>
             .
@@ -80,8 +80,8 @@ function SignUp() {
         <label className="mb-4 flex min-h-11 items-start gap-3 text-sm leading-relaxed">
           <input type="checkbox" checked={sms} onChange={(e) => setSms(e.target.checked)} className="mt-1 h-5 w-5" />
           <span>
-            {SMS_CONSENT}{" "}
-            <Link to="/legal/$doc" params={{ doc: "privacy" }} className="font-semibold text-[#8fd86f] underline">
+            Optional. Leave this unchecked to skip texts. You can still use email, push, or phone. {SMS_CONSENT}{" "}
+            <Link to="/legal/$doc" params={{ doc: "privacy" }} className="font-semibold text-[#5cba40] underline">
               Privacy Policy
             </Link>
           </span>

@@ -13,24 +13,26 @@ export const Route = createFileRoute("/_app/bookings")({
   component: Bookings,
 });
 
-const TABS = ["active", "completed", "canceled"] as const;
+const TABS = ["requests", "bookings", "assignments"] as const;
 
 const EMPTY_ART = {
-  active: emptyOngoing,
-  completed: emptyCompleted,
-  canceled: emptyCanceled,
+  requests: emptyOngoing,
+  bookings: emptyCompleted,
+  assignments: emptyCanceled,
 } as const;
 
 function Bookings() {
   const { bookings, cancelBooking } = useApp();
-  const [tab, setTab] = useState<(typeof TABS)[number]>("active");
+  const [tab, setTab] = useState<(typeof TABS)[number]>("requests");
   const [cancelId, setCancelId] = useState<string | null>(null);
   const navigate = useNavigate();
-  const list = bookings.filter((b) => {
-    if (tab === "completed") return b.status === "completed";
-    if (tab === "canceled") return b.status === "canceled";
-    return b.status !== "completed" && b.status !== "canceled";
-  });
+  const laneOf = (b: (typeof bookings)[number]) => {
+    const history = b.statusHistory?.map((event) => event.label).join(" ") ?? "";
+    if (history.includes("Assigned") || b.customerLabel?.includes("Assigned")) return "assignments";
+    if (b.status === "pending" || b.customerLabel?.toLowerCase().includes("pending")) return "requests";
+    return "bookings";
+  };
+  const list = bookings.filter((b) => laneOf(b) === tab);
 
   return (
     <div className="px-4 pb-6 pt-[max(1rem,env(safe-area-inset-top))]">
@@ -43,11 +45,11 @@ function Bookings() {
             role="tab"
             aria-selected={tab === item}
             onClick={() => setTab(item)}
-            className={`min-h-11 rounded-md text-sm font-semibold capitalize ${
-              tab === item ? "bg-[#5fbb3f] text-[#001e16]" : "border border-border bg-card text-foreground"
+            className={`min-h-11 rounded-lg text-sm font-semibold capitalize ${
+              tab === item ? "bg-[#5cba40] text-white" : "border border-[#e5e7eb] bg-white text-[#6b7280]"
             }`}
           >
-            {item === "canceled" ? "Canceled" : item === "active" ? "Active" : "Completed"}
+            {item === "requests" ? "Requests" : item === "bookings" ? "Bookings" : "Assignments"}
           </button>
         ))}
       </div>
@@ -59,7 +61,7 @@ function Bookings() {
               alt=""
               className="mx-auto h-36 w-36 object-contain"
             />
-            <p className="mt-3 text-sm font-semibold text-[#f4f7f5]">No {tab} requests</p>
+            <p className="mt-3 text-sm font-semibold text-[#171717]">No {tab} requests</p>
             <button
               type="button"
               onClick={() => navigate({ to: "/home" })}
@@ -73,56 +75,56 @@ function Bookings() {
           const closed = booking.status === "completed" || booking.status === "canceled";
           const updated = booking.statusHistory?.at(-1)?.at;
           return (
-            <article key={booking.id} className="rounded-[16px] border border-white/15 bg-[#06281f] p-4">
+            <article key={booking.id} className="rounded-lg border border-[#e5e7eb] bg-white p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs text-[#c5d4cc]">{booking.id}</p>
+                  <p className="text-xs text-[#6b7280]">{booking.id}</p>
                   <h2 className="text-base font-semibold">{booking.serviceTitle}</h2>
                 </div>
-                <span className="shrink-0 rounded-md bg-[#5fbb3f] px-2 py-1 text-xs font-semibold text-[#001e16]">
+                <span className="shrink-0 rounded-md bg-[#5cba40] px-2 py-1 text-xs font-semibold text-white">
                   {customerStatusLabel(booking.status, booking.customerLabel)}
                 </span>
               </div>
               <dl className="mt-3 space-y-1 text-sm">
                 <div className="flex justify-between gap-3">
-                  <dt className="text-[#c5d4cc]">Organization</dt>
+                  <dt className="text-[#6b7280]">Organization</dt>
                   <dd className="text-right">{booking.organizationLabel || booking.area}</dd>
                 </div>
                 <div className="flex justify-between gap-3">
-                  <dt className="text-[#c5d4cc]">Location</dt>
+                  <dt className="text-[#6b7280]">Location</dt>
                   <dd className="text-right">{booking.serviceLocation || booking.pickupLocation || "Not entered"}</dd>
                 </div>
                 {booking.vehicleSummary && (
                   <div className="flex justify-between gap-3">
-                    <dt className="text-[#c5d4cc]">Vehicle</dt>
+                    <dt className="text-[#6b7280]">Vehicle</dt>
                     <dd className="text-right">{booking.vehicleSummary}</dd>
                   </div>
                 )}
                 <div className="flex justify-between gap-3">
-                  <dt className="text-[#c5d4cc]">{booking.status === "canceled" ? "Canceled" : booking.status === "completed" ? "Completed" : "Updated"}</dt>
+                  <dt className="text-[#6b7280]">{booking.status === "canceled" ? "Canceled" : booking.status === "completed" ? "Completed" : "Updated"}</dt>
                   <dd className="text-right">{updated ? new Date(updated).toLocaleString() : booking.when}</dd>
                 </div>
               </dl>
               {booking.status === "completed" && (
-                <p className="mt-3 text-sm text-[#f4f7f5]">{booking.paymentSummary || "Payment recorded on the job."} Before and after photos are on the record.</p>
+                <p className="mt-3 text-sm text-[#171717]">{booking.paymentSummary || "Payment recorded on the job."} Before and after photos are on the record.</p>
               )}
               {booking.status === "canceled" && (
                 <div className="mt-3 space-y-1 text-sm">
                   <p>Reason: {booking.cancelReason || "Not recorded"}</p>
                   <p>{booking.paymentSummary}</p>
-                  <p className="text-xs text-[#c5d4cc]">{REFUND_LINE}</p>
-                  {booking.depositDispatched && <p className="text-xs text-[#c5d4cc]">{DEPOSIT_EARNED}</p>}
+                  <p className="text-xs text-[#6b7280]">{REFUND_LINE}</p>
+                  {booking.depositDispatched && <p className="text-xs text-[#6b7280]">{DEPOSIT_EARNED}</p>}
                 </div>
               )}
               {booking.syncStatus && booking.syncStatus !== "received" && (
                 <p className="mt-2 text-sm">Request received—media upload pending · {booking.syncStatus === "saved-locally" ? "Saved locally" : "Uploading"}</p>
               )}
-              {!closed && <p className="mt-2 text-xs text-[#c5d4cc]">Request is not approval. Accepted is not scheduled.</p>}
+              {!closed && <p className="mt-2 text-xs text-[#6b7280]">Request is not approval. Accepted is not scheduled.</p>}
               <div className="mt-3 flex flex-wrap items-center gap-x-4">
                 <button
                   type="button"
                   onClick={() => navigate({ to: "/requests/$id", params: { id: booking.id } })}
-                  className="min-h-11 text-sm font-semibold text-[#8fd86f] underline"
+                  className="min-h-11 text-sm font-semibold text-[#5cba40] underline"
                 >
                   View full record
                 </button>
@@ -132,13 +134,13 @@ function Bookings() {
                   </button>
                 )}
                 {booking.status === "canceled" && (
-                  <button type="button" onClick={() => navigate({ to: "/home" })} className="min-h-11 text-sm font-semibold text-[#8fd86f] underline">
+                  <button type="button" onClick={() => navigate({ to: "/home" })} className="min-h-11 text-sm font-semibold text-[#5cba40] underline">
                     Request a service
                   </button>
                 )}
               </div>
               {(booking.status === "pending" || booking.status === "ongoing") && (
-                <p className="mt-1 text-xs text-[#c5d4cc]">{CUSTOMER_CONFIG.cancellationMessage}</p>
+                <p className="mt-1 text-xs text-[#6b7280]">{CUSTOMER_CONFIG.cancellationMessage}</p>
               )}
             </article>
           );
@@ -146,13 +148,13 @@ function Bookings() {
       </div>
       {cancelId && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50" role="dialog" aria-modal="true" aria-labelledby="cancel-title">
-          <div className="w-full max-w-[480px] rounded-t-[16px] bg-[#06281f] p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <div className="w-full max-w-[480px] rounded-t-lg bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
             <h2 id="cancel-title" className="text-xl font-semibold">Request Cancellation</h2>
             <p className="mt-2 text-sm text-muted-foreground">This asks SIH&S to review the cancellation. It does not cancel the request by itself.</p>
             <Button type="button" full className="mt-4" onClick={() => { cancelBooking(cancelId); setCancelId(null); }}>
               Request Cancellation
             </Button>
-            <button type="button" className="mt-2 min-h-11 w-full font-semibold" onClick={() => setCancelId(null)}>Keep request</button>
+            <button type="button" className="mt-2 min-h-11 w-full rounded-lg font-semibold" onClick={() => setCancelId(null)}>Keep request</button>
           </div>
         </div>
       )}

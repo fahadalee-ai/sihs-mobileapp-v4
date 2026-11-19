@@ -21,7 +21,7 @@ function AccessScreen() {
           </div>
           <div>
             <dt className="text-muted-foreground">Linked properties</dt>
-            <dd className="font-semibold">{user?.organizationAccess === "linked" ? "Wilmington office" : "None"}</dd>
+            <dd className="font-semibold">{user?.organizationAccess === "linked" ? "Sample office" : "None"}</dd>
           </div>
           <div>
             <dt className="text-muted-foreground">Authorized requester</dt>

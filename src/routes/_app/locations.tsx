@@ -16,7 +16,6 @@ function Locations() {
   const [label, setLabel] = useState("");
   const [line, setLine] = useState("");
   const [editing, setEditing] = useState<string | null>(null);
-  const [error, setError] = useState("");
 
   return (
     <div>
@@ -29,18 +28,14 @@ function Locations() {
           <article key={loc.id} className="rounded-md border border-border bg-card p-3">
             {editing === loc.id ? (
               <form
+                noValidate
                 onSubmit={(e) => {
                   e.preventDefault();
-                  if (!label.trim() || !line.trim()) {
-                    setError("Label and address are required.");
-                    return;
-                  }
-                  updateLocation(loc.id, { label, line });
+                  updateLocation(loc.id, { label: label.trim() || loc.label, line: line.trim() || loc.line });
                   setEditing(null);
-                  setError("");
                 }}
               >
-                <Field label="Label" error={error || undefined}>
+                <Field label="Label">
                   <Input value={label} onChange={(e) => setLabel(e.target.value)} />
                 </Field>
                 <Field label="Address">
@@ -84,31 +79,27 @@ function Locations() {
         {signedIn && (
         <form
           className="rounded-md border border-border bg-card p-3"
+          noValidate
           onSubmit={(e) => {
             e.preventDefault();
-            if (!label.trim() || !line.trim() || editing) {
-              setError("Enter a label and a Delaware-area address.");
-              return;
-            }
-            addLocation({ label, line });
+            if (editing) return;
+            addLocation({ label: label.trim() || "Place", line: line.trim() || "Address" });
             setLabel("");
             setLine("");
-            setError("");
           }}
         >
           <h2 className="mb-2 font-semibold">Add a location</h2>
-          <Field label="Label" error={error || undefined}>
-            <Input value={editing ? "" : label} onChange={(e) => setLabel(e.target.value)} placeholder="Home" disabled={Boolean(editing)} />
+          <Field label="Label">
+            <Input value={editing ? "" : label} onChange={(e) => setLabel(e.target.value)} placeholder="Home" />
           </Field>
           <Field label="Address">
             <Input
               value={editing ? "" : line}
               onChange={(e) => setLine(e.target.value)}
-              placeholder="Wilmington, DE"
-              disabled={Boolean(editing)}
+              placeholder="100 Demo Lane, Sample City"
             />
           </Field>
-          <Button type="submit" disabled={Boolean(editing)}>
+          <Button type="submit">
             Add location
           </Button>
         </form>

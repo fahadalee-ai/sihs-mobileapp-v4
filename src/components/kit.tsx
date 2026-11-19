@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 export function Screen({
   children,
   className,
-  dark,
   padded = true,
 }: {
   children: ReactNode;
@@ -15,14 +14,7 @@ export function Screen({
   padded?: boolean;
 }) {
   return (
-    <div
-      className={cn(
-        "min-h-dvh",
-        dark ? "bg-ink text-white" : "bg-background text-foreground",
-        padded && "px-4 py-4",
-        className,
-      )}
-    >
+    <div className={cn("min-h-dvh", "bg-white text-[#171717]", padded && "px-4 py-4", className)}>
       {children}
     </div>
   );
@@ -33,7 +25,6 @@ export function Header({
   subtitle,
   back = true,
   right,
-  dark,
   fallbackTo = "/",
 }: {
   title: string;
@@ -46,30 +37,20 @@ export function Header({
   const router = useRouter();
   const canGoBack = useCanGoBack();
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-30 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3",
-        dark ? "bg-ink text-white" : "bg-background text-foreground",
-      )}
-    >
+    <header className="sticky top-0 z-30 bg-white px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 text-[#171717]">
       <div className="flex items-center gap-3">
         {back && (
           <button
             aria-label="Go back"
             onClick={() => (canGoBack ? router.history.back() : router.navigate({ to: fallbackTo as "/" }))}
-            className={cn(
-              "flex h-11 w-11 items-center justify-center rounded-xl border transition-colors",
-              dark
-                ? "border-white/25 text-white hover:bg-white/10"
-                : "border-border text-foreground hover:bg-muted",
-            )}
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#e5e7eb] text-[#171717] transition-colors hover:bg-[#f3f4f6]"
           >
             <ArrowLeft size={18} strokeWidth={2} />
           </button>
         )}
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-xl font-semibold tracking-tight">{title}</h1>
-          {subtitle && <p className={cn("truncate text-xs", dark ? "text-white/70" : "text-muted-foreground")}>{subtitle}</p>}
+          {subtitle && <p className="truncate text-xs text-[#6b7280]">{subtitle}</p>}
         </div>
         {right}
       </div>
@@ -90,16 +71,16 @@ export function Button({
   const styles = {
     primary: "bg-primary text-primary-foreground hover:bg-primary-dark",
     outline: "border border-border bg-card text-foreground hover:bg-muted",
-    light: "border border-white/40 bg-transparent text-white hover:bg-white/10",
-    dark: "bg-ink text-white hover:bg-primary-dark",
+    light: "border border-[#e5e7eb] bg-white text-[#171717] hover:bg-[#f3f4f6]",
+    dark: "bg-[#171717] text-white hover:bg-[#111111]",
     danger: "bg-danger text-white hover:opacity-90",
-    ghost: "text-primary hover:bg-primary/10",
+    ghost: "text-[#5cba40] hover:bg-[#5cba40]/10",
   }[variant];
   return (
     <button
       {...props}
       className={cn(
-        "inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-md px-4 py-3 text-sm font-semibold tracking-tight transition-colors disabled:cursor-not-allowed disabled:bg-[#c5d0c8] disabled:text-[#3d4a44] disabled:opacity-100",
+        "inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold tracking-tight transition-colors disabled:cursor-not-allowed disabled:bg-[#c5d0c8] disabled:text-[#3d4a44] disabled:opacity-100",
         styles,
         full && "w-full",
         className,
@@ -128,8 +109,8 @@ export function LinkButton({
   const styles = {
     primary: "bg-primary text-primary-foreground hover:bg-primary-dark",
     outline: "border border-border bg-card text-foreground hover:bg-muted",
-    light: "border border-white/40 text-white hover:bg-white/10",
-    dark: "bg-ink text-white hover:bg-primary-dark",
+    light: "border border-[#e5e7eb] bg-white text-[#171717] hover:bg-[#f3f4f6]",
+    dark: "bg-[#171717] text-white hover:bg-[#111111]",
     danger: "bg-danger text-white hover:opacity-90",
   }[variant];
   return (
@@ -137,7 +118,7 @@ export function LinkButton({
       to={to as "/"}
       params={params}
       className={cn(
-        "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-3 text-center text-sm font-semibold tracking-tight transition-colors",
+        "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-3 text-center text-sm font-semibold tracking-tight transition-colors",
         styles,
         full && "w-full",
         className,
@@ -250,7 +231,7 @@ export function Field({
 }
 
 export const inputClass =
-  "w-full rounded-xl border border-border bg-card px-3 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-foreground/40";
+  "w-full rounded-xl border border-transparent bg-[#f3f4f6] px-3 py-3 text-sm text-[#171717] outline-none placeholder:text-[#9ca3af] focus:border-[#5cba40]";
 
 export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={cn(inputClass, props.className)} />;
@@ -351,12 +332,12 @@ export function MenuSelect({
                     onOpenChange(false);
                   }}
                   className={cn(
-                    "flex min-h-11 w-full items-center justify-between gap-2 px-3 text-left text-sm text-[#001e16]",
+                    "flex min-h-11 w-full items-center justify-between gap-2 px-3 text-left text-sm text-[#171717]",
                     selected ? "bg-[#e7f6df] font-semibold" : "hover:bg-[#f3f8f4]",
                   )}
                 >
                   <span className="truncate">{item}</span>
-                  {selected && <Check size={16} aria-hidden className="shrink-0 text-[#2f7a1c]" />}
+                  {selected && <Check size={16} aria-hidden className="shrink-0 text-[#5cba40]" />}
                 </button>
               </li>
             );

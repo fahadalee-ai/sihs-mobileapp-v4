@@ -29,8 +29,8 @@ function PropertiesScreen() {
       <ScreenHeader title="Properties and Organization" backTo="/profile" />
       <div className="space-y-4 px-4 pb-8 text-sm">
         <section className="rounded-md border border-border bg-card p-4">
-          <h2 className="font-semibold">Wilmington office</h2>
-          <p className="mt-1">1201 N. Orange St., Suite 7724, Wilmington, DE 19801</p>
+          <h2 className="font-semibold">Sample office</h2>
+          <p className="mt-1">100 Demo Lane, Sample City, ST 00000</p>
           <p className="mt-2 text-muted-foreground">Service entrance: Suite 7724. Access notes stay with the property record.</p>
         </section>
         <section className="rounded-md border border-border bg-card p-4">

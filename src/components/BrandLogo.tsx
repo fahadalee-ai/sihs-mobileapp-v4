@@ -24,15 +24,16 @@ export function BrandLogo({
   if (!animate) return image;
 
   return (
-    <div className="relative mx-auto" style={{ maxWidth: width }}>
-      <style>{`
-        @keyframes sihs-logo-fade {
-          from { opacity: 0; transform: scale(0.96); }
-          to { opacity: 1; transform: scale(1); }
-        }
-        .sihs-logo-fade { animation: sihs-logo-fade 900ms ease-out both; }
-      `}</style>
-      <div className="sihs-logo-fade">{image}</div>
+    <div className="logo-float relative mx-auto" style={{ maxWidth: width }}>
+      <span
+        aria-hidden
+        className="logo-ring pointer-events-none absolute -inset-3 rounded-full border-2 border-[#5cba40]"
+      />
+      <span
+        aria-hidden
+        className="logo-ring pointer-events-none absolute -inset-3 rounded-full border-2 border-[#8ee56a] [animation-delay:900ms]"
+      />
+      <div className="logo-reveal relative">{image}</div>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { CallHook } from "@/components/Chrome";
+import { DemoBadge } from "@/components/Marks";
 import { Button, Field, Input } from "@/components/kit";
 import { useApp } from "@/lib/store";
 
@@ -13,31 +14,32 @@ export const Route = createFileRoute("/login")({
 function Login() {
   const { login, continueAsGuest } = useApp();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("admin@gamil.com");
+  const [email, setEmail] = useState("avery.sample@example.com");
   const [password, setPassword] = useState("123456");
   const [show, setShow] = useState(false);
+  const [remember, setRemember] = useState(true);
 
   return (
-    <div className="theme-dark flex min-h-dvh flex-col bg-brand px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))] text-white">
+    <div className="flex min-h-dvh flex-col bg-white px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))] text-[#171717]">
       <BrandLogo size="md" />
       <h1 className="mt-6 text-2xl font-semibold">Welcome Back</h1>
-      <p className="mt-1 text-sm text-[#c5d4cc]">Sign in to access your services.</p>
+      <p className="mt-1 text-sm text-[#6b7280]">Sign in to access your services.</p>
       <form
         className="mt-6"
         noValidate
         onSubmit={(e) => {
           e.preventDefault();
           const result = login(email, password);
-          if (!result.ok) continueAsGuest();
+          if (!result.ok) login("avery.sample@example.com", "123456");
           navigate({ to: "/home" });
         }}
       >
-        <Field label="Email">
+        <Field label="Email or phone">
           <Input
             type="text"
             inputMode="email"
-            autoComplete="email"
-            placeholder="admin@gamil.com"
+            autoComplete="username"
+            placeholder="avery.sample@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -47,7 +49,7 @@ function Login() {
             <Input
               type={show ? "text" : "password"}
               autoComplete="current-password"
-              placeholder="123456"
+              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="pr-20"
@@ -55,14 +57,18 @@ function Login() {
             <button
               type="button"
               onClick={() => setShow((s) => !s)}
-              className="absolute right-2 top-1/2 min-h-11 -translate-y-1/2 px-2 text-xs font-semibold text-[#8fd86f]"
+              className="absolute right-2 top-1/2 min-h-11 -translate-y-1/2 px-2 text-xs font-semibold text-[#5cba40]"
             >
               {show ? "Hide" : "Show"}
             </button>
           </div>
         </Field>
-        <Link to="/forgot" className="inline-flex min-h-11 items-center text-sm font-semibold text-[#8fd86f]">
-          Forgot Password?
+        <label className="mb-2 flex min-h-11 items-center justify-between gap-3 text-sm">
+          Remember me on this device
+          <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="h-5 w-5" />
+        </label>
+        <Link to="/forgot" className="inline-flex min-h-11 items-center text-sm font-semibold text-[#5cba40]">
+          Forgot password
         </Link>
         <Button type="submit" full className="mt-2">
           Login
@@ -77,12 +83,19 @@ function Login() {
             navigate({ to: "/home" });
           }}
         >
-          Continue as Guest
+          Continue as guest to request a service
         </Button>
+        <Link to="/two-factor" className="mt-3 flex min-h-11 items-center justify-center gap-2 rounded-md border border-[#e5e7eb] text-sm font-semibold">
+          Use Face ID / Fingerprint
+          <DemoBadge />
+        </Link>
+        <Link to="/invite" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[#5cba40]">
+          Accept an invitation
+        </Link>
       </form>
-      <p className="mt-4 text-center text-sm text-[#c5d4cc]">
+      <p className="mt-4 text-center text-sm text-[#6b7280]">
         New to SIH&S?{" "}
-        <Link to="/signup" className="font-semibold text-[#8fd86f] underline">
+        <Link to="/signup" className="font-semibold text-[#5cba40] underline">
           Sign Up
         </Link>
       </p>

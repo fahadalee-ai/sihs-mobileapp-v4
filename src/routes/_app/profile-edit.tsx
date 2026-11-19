@@ -16,7 +16,6 @@ function EditProfile() {
   const [email, setEmail] = useState(user?.email ?? "");
   const [phone, setPhone] = useState(user?.phone ?? "");
   const [address, setAddress] = useState(user?.address ?? "");
-  const [error, setError] = useState("");
 
   if (!user) {
     return (
@@ -32,27 +31,23 @@ function EditProfile() {
       <ScreenHeader title="Edit Profile" backTo="/profile" />
       <form
         className="px-4"
+        noValidate
         onSubmit={(e) => {
           e.preventDefault();
-          if (!fullName.trim() || !email.includes("@") || phone.replace(/\D/g, "").length !== 10) {
-            setError("Enter your name, a valid email, and a 10-digit phone number.");
-            return;
-          }
           updateUser({ fullName: fullName.trim(), email: email.trim(), phone, address: address.trim() });
-          setError("");
         }}
       >
-        <Field label="Full Name" error={error || undefined}>
+        <Field label="Full Name">
           <Input value={fullName} onChange={(e) => setFullName(e.target.value)} />
         </Field>
         <Field label="Email">
-          <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
         </Field>
         <Field label="Phone Number">
           <Input value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))} />
         </Field>
         <Field label="Address">
-          <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Street address in Delaware" />
+          <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Street address" />
         </Field>
         <Button type="submit" full>
           Save

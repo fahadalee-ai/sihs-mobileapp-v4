@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as ForgotRouteImport } from './routes/forgot'
+import { Route as InviteRouteImport } from './routes/invite'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as PendingRouteImport } from './routes/pending'
@@ -19,6 +20,7 @@ import { Route as ReadyRouteImport } from './routes/ready'
 import { Route as RevokedRouteImport } from './routes/revoked'
 import { Route as SessionRouteImport } from './routes/session'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as TwoFactorRouteImport } from './routes/two-factor'
 import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as AppAccessRouteImport } from './routes/_app/access'
 import { Route as AppBookingsRouteImport } from './routes/_app/bookings'
@@ -36,6 +38,7 @@ import { Route as AppProfileRouteImport } from './routes/_app/profile'
 import { Route as AppProfileEditRouteImport } from './routes/_app/profile-edit'
 import { Route as AppPropertiesRouteImport } from './routes/_app/properties'
 import { Route as AppRequestRouteImport } from './routes/_app/request'
+import { Route as AppV2RouteImport } from './routes/_app/v2'
 import { Route as LegalDocRouteImport } from './routes/legal/$doc'
 import { Route as AppRequestsIdRouteImport } from './routes/_app/requests/$id'
 import { Route as AppServicesSlugRouteImport } from './routes/_app/services/$slug'
@@ -52,6 +55,11 @@ const AppRoute = AppRouteImport.update({
 const ForgotRoute = ForgotRouteImport.update({
   id: '/forgot',
   path: '/forgot',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InviteRoute = InviteRouteImport.update({
+  id: '/invite',
+  path: '/invite',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -87,6 +95,11 @@ const SessionRoute = SessionRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TwoFactorRoute = TwoFactorRouteImport.update({
+  id: '/two-factor',
+  path: '/two-factor',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VerifyRoute = VerifyRouteImport.update({
@@ -174,6 +187,11 @@ const AppRequestRoute = AppRequestRouteImport.update({
   path: '/request',
   getParentRoute: () => AppRoute,
 } as any)
+const AppV2Route = AppV2RouteImport.update({
+  id: '/v2',
+  path: '/v2',
+  getParentRoute: () => AppRoute,
+} as any)
 const LegalDocRoute = LegalDocRouteImport.update({
   id: '/legal/$doc',
   path: '/legal/$doc',
@@ -193,6 +211,7 @@ const AppServicesSlugRoute = AppServicesSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/forgot': typeof ForgotRoute
+  '/invite': typeof InviteRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/pending': typeof PendingRoute
@@ -200,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/revoked': typeof RevokedRoute
   '/session': typeof SessionRoute
   '/signup': typeof SignupRoute
+  '/two-factor': typeof TwoFactorRoute
   '/verify': typeof VerifyRoute
   '/access': typeof AppAccessRoute
   '/bookings': typeof AppBookingsRoute
@@ -217,6 +237,7 @@ export interface FileRoutesByFullPath {
   '/profile-edit': typeof AppProfileEditRoute
   '/properties': typeof AppPropertiesRoute
   '/request': typeof AppRequestRoute
+  '/v2': typeof AppV2Route
   '/legal/$doc': typeof LegalDocRoute
   '/requests/$id': typeof AppRequestsIdRoute
   '/services/$slug': typeof AppServicesSlugRoute
@@ -224,6 +245,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/forgot': typeof ForgotRoute
+  '/invite': typeof InviteRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/pending': typeof PendingRoute
@@ -231,6 +253,7 @@ export interface FileRoutesByTo {
   '/revoked': typeof RevokedRoute
   '/session': typeof SessionRoute
   '/signup': typeof SignupRoute
+  '/two-factor': typeof TwoFactorRoute
   '/verify': typeof VerifyRoute
   '/access': typeof AppAccessRoute
   '/bookings': typeof AppBookingsRoute
@@ -248,6 +271,7 @@ export interface FileRoutesByTo {
   '/profile-edit': typeof AppProfileEditRoute
   '/properties': typeof AppPropertiesRoute
   '/request': typeof AppRequestRoute
+  '/v2': typeof AppV2Route
   '/legal/$doc': typeof LegalDocRoute
   '/requests/$id': typeof AppRequestsIdRoute
   '/services/$slug': typeof AppServicesSlugRoute
@@ -257,6 +281,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/forgot': typeof ForgotRoute
+  '/invite': typeof InviteRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/pending': typeof PendingRoute
@@ -264,6 +289,7 @@ export interface FileRoutesById {
   '/revoked': typeof RevokedRoute
   '/session': typeof SessionRoute
   '/signup': typeof SignupRoute
+  '/two-factor': typeof TwoFactorRoute
   '/verify': typeof VerifyRoute
   '/_app/access': typeof AppAccessRoute
   '/_app/bookings': typeof AppBookingsRoute
@@ -281,6 +307,7 @@ export interface FileRoutesById {
   '/_app/profile-edit': typeof AppProfileEditRoute
   '/_app/properties': typeof AppPropertiesRoute
   '/_app/request': typeof AppRequestRoute
+  '/_app/v2': typeof AppV2Route
   '/legal/$doc': typeof LegalDocRoute
   '/_app/requests/$id': typeof AppRequestsIdRoute
   '/_app/services/$slug': typeof AppServicesSlugRoute
@@ -290,6 +317,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/forgot'
+    | '/invite'
     | '/login'
     | '/onboarding'
     | '/pending'
@@ -297,6 +325,7 @@ export interface FileRouteTypes {
     | '/revoked'
     | '/session'
     | '/signup'
+    | '/two-factor'
     | '/verify'
     | '/access'
     | '/bookings'
@@ -314,6 +343,7 @@ export interface FileRouteTypes {
     | '/profile-edit'
     | '/properties'
     | '/request'
+    | '/v2'
     | '/legal/$doc'
     | '/requests/$id'
     | '/services/$slug'
@@ -321,6 +351,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/forgot'
+    | '/invite'
     | '/login'
     | '/onboarding'
     | '/pending'
@@ -328,6 +359,7 @@ export interface FileRouteTypes {
     | '/revoked'
     | '/session'
     | '/signup'
+    | '/two-factor'
     | '/verify'
     | '/access'
     | '/bookings'
@@ -345,6 +377,7 @@ export interface FileRouteTypes {
     | '/profile-edit'
     | '/properties'
     | '/request'
+    | '/v2'
     | '/legal/$doc'
     | '/requests/$id'
     | '/services/$slug'
@@ -353,6 +386,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_app'
     | '/forgot'
+    | '/invite'
     | '/login'
     | '/onboarding'
     | '/pending'
@@ -360,6 +394,7 @@ export interface FileRouteTypes {
     | '/revoked'
     | '/session'
     | '/signup'
+    | '/two-factor'
     | '/verify'
     | '/_app/access'
     | '/_app/bookings'
@@ -377,6 +412,7 @@ export interface FileRouteTypes {
     | '/_app/profile-edit'
     | '/_app/properties'
     | '/_app/request'
+    | '/_app/v2'
     | '/legal/$doc'
     | '/_app/requests/$id'
     | '/_app/services/$slug'
@@ -386,6 +422,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   ForgotRoute: typeof ForgotRoute
+  InviteRoute: typeof InviteRoute
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
   PendingRoute: typeof PendingRoute
@@ -393,6 +430,7 @@ export interface RootRouteChildren {
   RevokedRoute: typeof RevokedRoute
   SessionRoute: typeof SessionRoute
   SignupRoute: typeof SignupRoute
+  TwoFactorRoute: typeof TwoFactorRoute
   VerifyRoute: typeof VerifyRoute
   LegalDocRoute: typeof LegalDocRoute
 }
@@ -418,6 +456,13 @@ declare module '@tanstack/react-router' {
       path: '/forgot'
       fullPath: '/forgot'
       preLoaderRoute: typeof ForgotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invite': {
+      id: '/invite'
+      path: '/invite'
+      fullPath: '/invite'
+      preLoaderRoute: typeof InviteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -467,6 +512,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/two-factor': {
+      id: '/two-factor'
+      path: '/two-factor'
+      fullPath: '/two-factor'
+      preLoaderRoute: typeof TwoFactorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/verify': {
@@ -588,6 +640,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRequestRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/v2': {
+      id: '/_app/v2'
+      path: '/v2'
+      fullPath: '/v2'
+      preLoaderRoute: typeof AppV2RouteImport
+      parentRoute: typeof AppRoute
+    }
     '/legal/$doc': {
       id: '/legal/$doc'
       path: '/legal/$doc'
@@ -629,6 +688,7 @@ interface AppRouteChildren {
   AppProfileEditRoute: typeof AppProfileEditRoute
   AppPropertiesRoute: typeof AppPropertiesRoute
   AppRequestRoute: typeof AppRequestRoute
+  AppV2Route: typeof AppV2Route
   AppRequestsIdRoute: typeof AppRequestsIdRoute
   AppServicesSlugRoute: typeof AppServicesSlugRoute
 }
@@ -650,6 +710,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProfileEditRoute: AppProfileEditRoute,
   AppPropertiesRoute: AppPropertiesRoute,
   AppRequestRoute: AppRequestRoute,
+  AppV2Route: AppV2Route,
   AppRequestsIdRoute: AppRequestsIdRoute,
   AppServicesSlugRoute: AppServicesSlugRoute,
 }
@@ -660,6 +721,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   ForgotRoute: ForgotRoute,
+  InviteRoute: InviteRoute,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
   PendingRoute: PendingRoute,
@@ -667,6 +729,7 @@ const rootRouteChildren: RootRouteChildren = {
   RevokedRoute: RevokedRoute,
   SessionRoute: SessionRoute,
   SignupRoute: SignupRoute,
+  TwoFactorRoute: TwoFactorRoute,
   VerifyRoute: VerifyRoute,
   LegalDocRoute: LegalDocRoute,
 }

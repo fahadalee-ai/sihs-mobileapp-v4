@@ -33,6 +33,10 @@ function Confirmation() {
               <dt className="text-muted-foreground">Service</dt>
               <dd className="font-semibold">{booking.serviceTitle}</dd>
             </div>
+            <div>
+              <dt className="text-muted-foreground">Confirmed service site</dt>
+              <dd className="font-semibold">{booking.propertyAddress || booking.serviceLocation || "Address pending office confirmation"} · Mobile or office type is confirmed with the booking.</dd>
+            </div>
           </dl>
         ) : (
           <p className="mt-3 text-sm">Your request was recorded.</p>

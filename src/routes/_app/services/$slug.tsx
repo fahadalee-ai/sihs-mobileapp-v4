@@ -8,6 +8,11 @@ import collectionPhoto from "@/img/photo-collection.jpg";
 import dnaPhoto from "@/img/photo-dna.jpg";
 import docsPhoto from "@/img/photo-docs.jpg";
 import notaryPhoto from "@/img/photo-notary.jpg";
+import iconCourier from "@/img/Services_09-Courier-Transport.png";
+import iconCleaning from "@/img/Services_010-Cleaning.png";
+import iconProperty from "@/img/Services_011-Property-Work.png";
+import iconSupplies from "@/img/Services_012-Supplies.png";
+import iconContracted from "@/img/Services_013-Contracted-Service.png";
 import { Button } from "@/components/kit";
 import {
   DNA_LAB_DISCLOSURE,
@@ -26,7 +31,18 @@ const SERVICE_PHOTOS: Record<string, string> = {
   dna: dnaPhoto,
   "pim-vee": docsPhoto,
   notary: notaryPhoto,
+  courier: iconCourier,
+  transport: iconCourier,
+  cleaning: iconCleaning,
+  janitorial: iconCleaning,
+  lawn: iconProperty,
+  lawncare: iconProperty,
+  supplies: iconSupplies,
+  other: iconContracted,
+  heavy: iconContracted,
 };
+
+const ICON_SLUGS = new Set(["courier", "transport", "cleaning", "janitorial", "lawn", "lawncare", "supplies", "other", "heavy"]);
 
 export const Route = createFileRoute("/_app/services/$slug")({
   head: ({ params }) => ({
@@ -51,6 +67,10 @@ function ServiceDetail() {
   }
 
   const start = (locationType?: "in-office" | "mobile") => {
+    if (service.slug === "lockouts") {
+      navigate({ to: "/v2", search: { view: "uhaul" } });
+      return;
+    }
     setDraft({ serviceSlug: service.slug, locationType });
     navigate({ to: "/request", search: { slug: service.slug } });
   };
@@ -58,11 +78,17 @@ function ServiceDetail() {
   return (
     <div className="pb-8">
       <ScreenHeader title="SIH&S" />
-      <img
-        src={SERVICE_PHOTOS[service.slug]}
-        alt={service.title}
-        className="h-52 w-full object-cover"
-      />
+      {ICON_SLUGS.has(service.slug) ? (
+        <div className="flex h-52 items-center justify-center bg-[#f3f4f6] px-6">
+          <img src={SERVICE_PHOTOS[service.slug]} alt={service.title} className="h-40 w-auto object-contain" />
+        </div>
+      ) : (
+        <img
+          src={SERVICE_PHOTOS[service.slug] ?? towingPhoto}
+          alt={service.title}
+          className="h-52 w-full object-cover"
+        />
+      )}
       <div className="px-4 pt-4">
         <h2 className="text-2xl font-semibold">{service.title}</h2>
         {service.slug === "pim-vee" && (
@@ -72,9 +98,10 @@ function ServiceDetail() {
         )}
         <p className="mt-1 text-sm text-muted-foreground">{service.descriptor}</p>
         {service.slug === "towing" && (
-          <p className="mt-3 inline-flex rounded-md bg-[#5fbb3f] px-2 py-1 text-xs font-semibold text-[#001e16]">
-            PRIMARY SERVICE AREA: Northern New Castle County, DE
-          </p>
+          <p className="mt-3 text-sm">Coverage depends on your service and contract. We will confirm availability. Dispatch verifies contract eligibility before any job is dispatched. Light-duty consensual towing only, including authorized secondary tow.</p>
+        )}
+        {service.slug === "lockouts" && (
+          <p className="mt-3 text-sm" role="alert">Lockout service is available only for authorized U-Haul assignments.</p>
         )}
         {service.slug === "pim-vee" && (
           <p className="mt-3 text-sm font-semibold">

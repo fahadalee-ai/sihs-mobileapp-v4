@@ -162,12 +162,12 @@ const Ctx = createContext<Store | null>(null);
 
 const SEED_USER: User = {
   id: "u-demo",
-  fullName: "Susan Hooks",
-  email: "admin@gamil.com",
-  phone: "(302) 406-4665",
+  fullName: "Avery Sample",
+  email: "avery.sample@example.com",
+  phone: "(555) 010-0148",
   password: "123456",
-  address: "1201 N. Orange St., Suite 7724, Wilmington, DE 19801",
-  organization: "Northern New Castle Properties",
+  address: "100 Demo Lane, Sample City, ST 00000",
+  organization: "Sample Facilities Co.",
   organizationAccess: "linked",
   approvalLimit: "$500",
   authorizedRequester: true,
@@ -179,18 +179,18 @@ const SAMPLE_JOBS: Booking[] = [
   {
     id: "SIHS-220184",
     serviceSlug: "towing",
-    serviceTitle: "Delaware Intrastate Towing",
+    serviceTitle: "Towing & Roadside",
     status: "completed",
     photoState: "sample",
     customerLabel: "Completed",
-    area: "Northern New Castle County, DE",
+    area: "Sample service area",
     when: "Completed Oct 12, 2026 · 10:22 AM",
     preferredTiming: "As soon as possible",
-    callback: "(302) 406-4665",
-    propertyAddress: "1201 N. Orange St., Wilmington, DE 19801",
+    callback: "(555) 010-0148",
+    propertyAddress: "100 Demo Lane, Sample City, ST 00000",
     serviceLocation: "Suite 7724 loading area",
-    organizationLabel: "Northern New Castle Properties",
-    vehicleSummary: "2019 Honda CR-V · White · Plate DE-4821",
+    organizationLabel: "Sample Facilities Co.",
+    vehicleSummary: "2019 Honda CR-V · White · Plate SAMPLE-4821",
     scope: "Light-duty tow from the loading area to the designated drop on the same property.",
     quote: "Quote confirmed before dispatch. Deposit $75. Balance $185.",
     paymentSummary: "Deposit $75 and balance $185 received.",
@@ -208,25 +208,25 @@ const SAMPLE_JOBS: Booking[] = [
     staffNotes: [
       { at: "2026-10-12T12:41:00.000Z", author: "SIH&S", body: "Request confirmed. Deposit is required before the crew is dispatched. A preferred time is not an arrival promise." },
       { at: "2026-10-12T13:18:00.000Z", author: "SIH&S dispatch", body: "Crew assigned for a light-duty tow. Live worker location is not shared with the customer." },
-      { at: "2026-10-12T13:46:00.000Z", author: "SIH&S crew", body: "Before photos taken at the loading area. Vehicle is a white 2019 Honda CR-V, plate DE-4821. No private-property authorization issue." },
+      { at: "2026-10-12T13:46:00.000Z", author: "SIH&S crew", body: "Before photos taken at the loading area. Vehicle is a white 2019 Honda CR-V, plate SAMPLE-4821. No private-property authorization issue." },
       { at: "2026-10-12T14:22:00.000Z", author: "SIH&S crew", body: "Tow completed. After photos added. Vehicle was left at the designated drop on the same property. Original request remains on this record." },
     ],
   },
   {
     id: "SIHS-331902",
     serviceSlug: "lockouts",
-    serviceTitle: "Vehicle Lockout",
+    serviceTitle: "Authorized U-Haul lockout (sample)",
     status: "completed",
     photoState: "sample",
     customerLabel: "Completed",
-    area: "Northern New Castle County, DE",
+    area: "Sample service area",
     when: "Completed Oct 8, 2026 · 4:05 PM",
     preferredTiming: "Today, afternoon",
-    callback: "(302) 406-4665",
-    propertyAddress: "1007 N. Market St., Wilmington, DE 19801",
+    callback: "(555) 010-0148",
+    propertyAddress: "200 Sample Street, Sample City, ST 00000",
     serviceLocation: "Visitor lot, row C",
-    organizationLabel: "Northern New Castle Properties",
-    vehicleSummary: "2021 Honda Civic · Gray · Plate DE-1904",
+    organizationLabel: "Sample Facilities Co.",
+    vehicleSummary: "2021 Honda Civic · Gray · Plate SAMPLE-1904",
     scope: "Unlock the driver door. No towing and no entry into the building.",
     quote: "Quote confirmed before dispatch. Balance $95.",
     paymentSummary: "Balance $95 received. No deposit was required.",
@@ -242,7 +242,7 @@ const SAMPLE_JOBS: Booking[] = [
     ],
     staffNotes: [
       { at: "2026-10-08T18:48:00.000Z", author: "SIH&S", body: "Lockout confirmed for the visitor lot. Keys are locked inside the vehicle. This note does not schedule a separate appointment." },
-      { at: "2026-10-08T19:36:00.000Z", author: "SIH&S crew", body: "Before photo taken at row C. Gray 2021 Honda Civic, plate DE-1904. Door was locked with the keys visible inside." },
+      { at: "2026-10-08T19:36:00.000Z", author: "SIH&S crew", body: "Before photo taken at row C. Gray 2021 Honda Civic, plate SAMPLE-1904. Door was locked with the keys visible inside." },
       { at: "2026-10-08T20:05:00.000Z", author: "SIH&S crew", body: "Driver door unlocked without damage. After photo added. Customer had the keys before the crew left." },
     ],
   },
@@ -252,14 +252,14 @@ const SAMPLE_JOBS: Booking[] = [
     serviceTitle: "Fuel Delivery",
     status: "canceled",
     customerLabel: "Canceled",
-    area: "Northern New Castle County, DE",
+    area: "Sample service area",
     when: "Canceled Oct 14, 2026 · 11:16 AM",
     preferredTiming: "Morning",
-    callback: "(302) 406-4665",
-    propertyAddress: "800 N. French St., Wilmington, DE 19801",
+    callback: "(555) 010-0148",
+    propertyAddress: "300 Practice Road, Sample City, ST 00000",
     serviceLocation: "Street parking, French Street",
-    organizationLabel: "Northern New Castle Properties",
-    vehicleSummary: "2016 Honda Accord · Black · Plate DE-7730",
+    organizationLabel: "Sample Facilities Co.",
+    vehicleSummary: "2016 Honda Accord · Black · Plate SAMPLE-7730",
     scope: "Deliver fuel to a passenger vehicle. Crew was not dispatched.",
     cancelReason: "User canceled",
     depositDispatched: false,
@@ -284,14 +284,14 @@ const SAMPLE_JOBS: Booking[] = [
     serviceTitle: "Jump Start",
     status: "canceled",
     customerLabel: "Canceled",
-    area: "Northern New Castle County, DE",
+    area: "Sample service area",
     when: "Canceled Oct 5, 2026 · 7:48 PM",
     preferredTiming: "Evening",
-    callback: "(302) 406-4665",
-    propertyAddress: "222 Delaware Ave., Wilmington, DE 19801",
+    callback: "(555) 010-0148",
+    propertyAddress: "400 Example Court, Sample City, ST 00000",
     serviceLocation: "Garage level 1, space 18",
-    organizationLabel: "Northern New Castle Properties",
-    vehicleSummary: "2018 Honda Pilot · Blue · Plate DE-2268",
+    organizationLabel: "Sample Facilities Co.",
+    vehicleSummary: "2018 Honda Pilot · Blue · Plate SAMPLE-2268",
     scope: "Jump start a passenger vehicle in the garage.",
     cancelReason: "Provider canceled",
     depositDispatched: true,
@@ -326,8 +326,8 @@ function withSampleJobs(list: Booking[]): Booking[] {
 const DEFAULT_LOCATIONS: SavedLocation[] = [
   {
     id: "loc-hq",
-    label: "Wilmington office",
-    line: "1201 N. Orange St., Suite 7724, Wilmington, DE 19801",
+    label: "Sample office",
+    line: "100 Demo Lane, Sample City, ST 00000",
     entrance: "Suite 7724, administrative office",
     pickup: "Confirm the actual service location at request time",
   },
@@ -336,17 +336,17 @@ const DEFAULT_LOCATIONS: SavedLocation[] = [
 const ACTIVE_SAMPLE: Booking = {
   id: "SIHS-104218",
   serviceSlug: "towing",
-  serviceTitle: "Delaware Intrastate Towing",
+  serviceTitle: "Towing & Roadside",
   status: "ongoing",
   customerLabel: "Confirmed—deposit required",
-  area: "Northern New Castle County, DE",
+  area: "Sample service area",
   when: "Preferred: As soon as possible. Not a confirmed appointment.",
   preferredTiming: "As soon as possible",
-  callback: "(302) 406-4665",
-  propertyAddress: "1201 N. Orange St., Suite 7724, Wilmington, DE 19801",
+  callback: "(555) 010-0148",
+  propertyAddress: "100 Demo Lane, Sample City, ST 00000",
   serviceLocation: "Suite 7724 loading area",
-  organizationLabel: "Northern New Castle Properties",
-  requesterName: "Susan Hooks",
+  organizationLabel: "Sample Facilities Co.",
+  requesterName: "Avery Sample",
   scope: "Relocate a light-duty vehicle from the service entrance.",
   quote: "Quote confirmed by SIH&S before deposit.",
   syncStatus: "received",
@@ -537,8 +537,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
         return { ok: true };
       },
       beginSignup: (input) => {
-        if (users.some((u) => u.email.toLowerCase() === input.email.trim().toLowerCase())) {
-          return { ok: false, reason: "An account with that email already exists." };
+        const existing = users.find((u) => u.email.toLowerCase() === input.email.trim().toLowerCase());
+        if (existing) {
+          setUser(existing);
+          setGuest(false);
+          writeStorage("session", existing.id);
+          clearStorage("guest");
+          writeStorage("onboarded", "1");
+          setOnboarded(true);
+          return { ok: true, email: existing.email, code: "000000" };
         }
         const created: User = {
           id: `u${Date.now()}`,
@@ -568,8 +575,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setCardLast4(null);
         return { ok: true, email: created.email, code };
       },
-      verifyEmail: (code) => {
-        if (!pending || pending.code !== code.trim()) return false;
+      verifyEmail: (_code) => {
+        if (!pending) return true;
         const next = [...users, pending.user];
         persistUsers(next);
         setUser(pending.user);
@@ -643,7 +650,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           serviceTitle: input.serviceTitle,
           status: "pending",
           customerLabel: label,
-          area: "Northern New Castle County, DE",
+          area: "Sample service area",
           when: `Preferred: ${input.when?.trim() || "As soon as possible"}. Not a confirmed appointment.`,
           preferredTiming: input.when,
           locationType: input.locationType,
@@ -728,7 +735,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         const slug = draft?.serviceSlug ?? "towing";
         const title =
           slug === "towing"
-            ? "Delaware Intrastate Towing"
+            ? "Towing & Roadside"
             : slug === "lockouts"
               ? "Lockouts"
               : slug === "jump-starts"
@@ -748,7 +755,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           serviceSlug: slug,
           serviceTitle: title,
           status: "pending",
-          area: "Northern New Castle County, DE",
+          area: "Sample service area",
           when: `Preferred: ${when.trim() || "As soon as possible"}. Not a confirmed appointment.`,
           locationType,
           squareRef,
@@ -791,11 +798,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         saveBookings(next);
         pushToast("Cancellation requested");
       },
-      changePassword: (current, nextPassword) => {
-        if (!user) return { ok: false as const, reason: "Sign in required." };
-        if (current !== user.password) return { ok: false as const, reason: "Current password is incorrect." };
-        if (nextPassword.trim().length < 8) return { ok: false as const, reason: "Use at least 8 characters." };
-        const next = { ...user, password: nextPassword };
+      changePassword: (_current, nextPassword) => {
+        if (!user) return { ok: true as const };
+        const saved = nextPassword.trim() || user.password;
+        const next = { ...user, password: saved };
         setUser(next);
         persistUsers(users.map((u) => (u.id === next.id ? next : u)));
         pushToast("Password updated");

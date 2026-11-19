@@ -11,9 +11,9 @@ function Revoked() {
   const { logout } = useApp();
   const navigate = useNavigate();
   return (
-    <div className="theme-dark flex min-h-dvh flex-col bg-brand px-6 py-10 text-white">
+    <div className="flex min-h-dvh flex-col bg-white px-6 py-10 text-[#171717]">
       <h1 className="text-2xl font-semibold">Your access to this organization has ended.</h1>
-      <p className="mt-3 text-sm leading-relaxed text-[#c5d4cc]">
+      <p className="mt-3 text-sm leading-relaxed text-[#6b7280]">
         Contact SIH&S if you believe this is an error. Property and organization records are no longer shown.
       </p>
       <div className="mt-6">
@@ -21,7 +21,7 @@ function Revoked() {
       </div>
       <button
         type="button"
-        className="mt-8 min-h-11 text-left text-sm font-semibold text-[#8fd86f]"
+        className="mt-8 min-h-11 text-left text-sm font-semibold text-[#5cba40]"
         onClick={() => {
           logout();
           navigate({ to: "/login" });

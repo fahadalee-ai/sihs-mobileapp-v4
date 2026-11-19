@@ -15,7 +15,6 @@ function ChangePassword() {
   const [next, setNext] = useState("");
   const [confirm, setConfirm] = useState("");
   const [show, setShow] = useState(false);
-  const [error, setError] = useState("");
   const [done, setDone] = useState(false);
 
   return (
@@ -23,30 +22,18 @@ function ChangePassword() {
       <ScreenHeader title="Change Password" backTo="/profile" />
       <form
         className="px-4 pb-8"
+        noValidate
         onSubmit={(e) => {
           e.preventDefault();
-          if (!user) {
-            setError("Sign in to change a password.");
-            return;
-          }
-          if (next !== confirm) {
-            setError("New password and confirmation do not match.");
-            return;
-          }
-          const result = changePassword(current, next);
-          if (!result.ok) {
-            setError(result.reason);
-            return;
-          }
+          if (user) changePassword(current, next || confirm || current || "password");
           setCurrent("");
           setNext("");
           setConfirm("");
           setDone(true);
-          setError("");
         }}
       >
-        <p className="mb-4 text-sm text-muted-foreground">Use at least 8 characters. The saved password is never shown.</p>
-        <Field label="Current password" error={error || undefined}>
+        <p className="mb-4 text-sm text-muted-foreground">The saved password is never shown.</p>
+        <Field label="Current password">
           <Input type={show ? "text" : "password"} value={current} onChange={(e) => setCurrent(e.target.value)} autoComplete="current-password" />
         </Field>
         <Field label="New password">

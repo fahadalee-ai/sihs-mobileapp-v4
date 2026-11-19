@@ -44,7 +44,7 @@ function serviceTitle(slug: string) {
 
 function RequestScreen() {
   const { slug } = Route.useSearch();
-  const { user, guest, locations, submitRequest } = useApp();
+  const { user, guest, locations, submitRequest, setDraft } = useApp();
   const navigate = useNavigate();
   const signedIn = Boolean(user) && !guest;
   const [step, setStep] = useState(slug ? 1 : 0);
@@ -73,7 +73,7 @@ function RequestScreen() {
   const [color, setColor] = useState("");
   const [plate, setPlate] = useState("");
   const [condition, setCondition] = useState("");
-  const [authority, setAuthority] = useState("");
+  const [authority, setAuthority] = useState("I don't know");
   const [privateProperty, setPrivateProperty] = useState(false);
   const [ownerName, setOwnerName] = useState("");
   const [ownerContact, setOwnerContact] = useState("");
@@ -102,10 +102,19 @@ function RequestScreen() {
   const [terms, setTerms] = useState(false);
   const [sms, setSms] = useState(false);
   const [duplicateId, setDuplicateId] = useState("");
+  const [appointmentType, setAppointmentType] = useState<"in-office" | "mobile">("mobile");
+  const [keysAccess, setKeysAccess] = useState("");
+  const [drivetrain, setDrivetrain] = useState("");
+  const [rolling, setRolling] = useState("");
+  const [equipment, setEquipment] = useState("");
+  const [payer, setPayer] = useState("");
+  const [supplyQty, setSupplyQty] = useState("1");
+  const [supplyUnit, setSupplyUnit] = useState("each");
+  const [submitting, setSubmitting] = useState(false);
 
   const hideMedia = RESTRICTED_MEDIA_SLUGS.has(serviceSlug);
   const steps = useMemo(
-    () => ["Service", signedIn ? "Account" : "Requester", "What you need", "Where", ...(hideMedia ? [] : ["Photos"]), "Details", "Review"],
+    () => ["Service", "Details", "Location", "Contact", ...(hideMedia ? [] : ["Uploads"]), "Review"],
     [hideMedia, signedIn],
   );
   const title = serviceTitle(serviceSlug);
@@ -115,39 +124,66 @@ function RequestScreen() {
       : "Individual / not linked"
     : organization;
   const preferred = timing === "Specific date and time window" ? windowText || "Specific window" : timing;
-  const inDelaware = /delaware|\bde\b|wilmington|new castle/i.test(`${propertyAddress} ${serviceLocation}`);
-
   const next = () => {
     setStep((value) => Math.min(value + 1, steps.length - 1));
   };
 
-  const submit = () => {
-    const offline = typeof navigator !== "undefined" && !navigator.onLine;
-    const result = submitRequest({
+  const saveDraft = () => {
+    setDraft({
       serviceSlug,
-      serviceTitle: title,
-      callback: callback.trim(),
-      requesterName: (signedIn ? user?.fullName ?? "" : name).trim(),
-      organizationLabel: orgLabel.trim(),
-      poNumber: po.trim(),
-      propertyAddress: propertyAddress.trim(),
-      pickupLocation: serviceLocation.trim(),
-      serviceEntrance: accessNotes.trim(),
-      description: scope.trim() || otherText.trim(),
-      photoCount: files.filter((item) => item.status !== "Failed").length,
-      vehicleSummary: VEHICLE_SLUGS.has(serviceSlug) ? [year, make, model, color, plate].filter(Boolean).join(" · ") : undefined,
-      detailSummary: [authority, fuelType, destination, program, category, items].filter(Boolean).join(" · "),
+      locationType: appointmentType,
       when: preferred,
-      authorizationPending: serviceSlug === "towing" && privateProperty,
-      requestType: EXTRA_SERVICES.some((item) => item.slug === serviceSlug) ? "unlisted" : "listed",
-      vehicle: VEHICLE_SLUGS.has(serviceSlug) ? { make, model, year, color, plate, notes: condition } : undefined,
-      offline,
+      callback: callback.trim(),
+      propertyAddress: propertyAddress.trim(),
+      serviceEntrance: accessNotes.trim(),
+      pickupLocation: serviceLocation.trim(),
+      description: scope.trim() || otherText.trim(),
+      requestType: serviceSlug === "supplies" ? "supplies" : "listed",
     });
-    if (result.duplicate) {
-      setDuplicateId(result.id);
-      return;
+    navigate({ to: "/v2", search: { view: "drafts" } });
+  };
+
+  const submit = () => {
+    if (submitting) return;
+    const phone = (!user || otherCallback ? callback : user.phone || callback).trim();
+    const site = propertyAddress.trim();
+    const pickup = serviceLocation.trim();
+    setSubmitting(true);
+    const offline = typeof navigator !== "undefined" && !navigator.onLine;
+    const party = authority || "I don't know";
+    try {
+      const result = submitRequest({
+        serviceSlug,
+        serviceTitle: title,
+        callback: phone,
+        requesterName: (signedIn ? user?.fullName ?? "" : name).trim(),
+        organizationLabel: orgLabel.trim(),
+        poNumber: po.trim(),
+        propertyAddress: site,
+        pickupLocation: pickup,
+        serviceEntrance: accessNotes.trim(),
+        description: scope.trim() || otherText.trim(),
+        photoCount: files.filter((item) => item.status !== "Failed").length,
+        vehicleSummary: VEHICLE_SLUGS.has(serviceSlug) ? [year, make, model, color, plate].filter(Boolean).join(" · ") : undefined,
+        detailSummary: [party, fuelType, destination, program, category, items, keysAccess, drivetrain, rolling, equipment, payer].filter(Boolean).join(" · "),
+        when: preferred,
+        locationType: appointmentType,
+        authorizationPending: serviceSlug === "towing" && privateProperty,
+        requestType: EXTRA_SERVICES.some((item) => item.slug === serviceSlug) ? "unlisted" : "listed",
+        vehicle: VEHICLE_SLUGS.has(serviceSlug) ? { make, model, year, color, plate, notes: condition } : undefined,
+        offline,
+      });
+      if (result.duplicate) {
+        setDuplicateId(result.id);
+        navigate({ to: "/v2", search: { view: "duplicate" } });
+        return;
+      }
+      navigate({ to: "/confirmation", search: { id: result.id } });
+    } catch {
+      setSubmitting(false);
+    } finally {
+      setSubmitting(false);
     }
-    navigate({ to: "/confirmation", search: { id: result.id } });
   };
 
   return (
@@ -163,14 +199,14 @@ function RequestScreen() {
           </p>
         </div>
         <div className="mb-4 h-1 overflow-hidden rounded-full bg-card">
-          <div className="h-full bg-[#5fbb3f]" style={{ width: `${((step + 1) / steps.length) * 100}%` }} />
+          <div className="h-full bg-[#5cba40]" style={{ width: `${((step + 1) / steps.length) * 100}%` }} />
         </div>
 
         {steps[step] === "Service" && (
           <>
             <Field label="Service">
               <select className="min-h-11 w-full rounded-xl border border-border bg-card px-3" value={serviceSlug} onChange={(e) => setServiceSlug(e.target.value)}>
-                {SERVICES.map((service) => (
+                {SERVICES.filter((service) => !service.hidden && !service.ineligible).map((service) => (
                   <option key={service.slug} value={service.slug}>{service.title}</option>
                 ))}
                 {EXTRA_SERVICES.map((service) => (
@@ -183,19 +219,24 @@ function RequestScreen() {
                 <Textarea value={otherText} onChange={(e) => setOtherText(e.target.value)} />
               </Field>
             )}
+            {(serviceSlug === "lockouts" || otherText.toLowerCase().includes("lockout")) && (
+              <p className="rounded-md border border-[#e5e7eb] bg-white p-3 text-sm" role="alert">
+                Lockout service is available only for authorized U-Haul assignments.
+              </p>
+            )}
           </>
         )}
 
-        {steps[step] === "Account" && user && (
+        {steps[step] === "Contact" && user && (
           <>
-            <div className="rounded-[16px] border border-white/15 bg-[#06281f] p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-[#8fd86f]">Requesting as</p>
+            <div className="rounded-lg border border-[#e5e7eb] bg-white p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#5cba40]">Requesting as</p>
               <p className="mt-2 text-base font-semibold">{user.fullName}</p>
               <p className="mt-1">{otherCallback ? callback : user.phone}</p>
               <p>{user.organizationAccess === "linked" ? user.organization : "Individual / not linked"}</p>
-              <p className="mt-2 text-sm text-[#c5d4cc]">These details come from your account. This request will not ask for them again.</p>
+              <p className="mt-2 text-sm text-[#6b7280]">These details come from your account. This request will not ask for them again.</p>
             </div>
-            <button type="button" className="mt-3 min-h-11 text-sm font-semibold text-[#8fd86f] underline" onClick={() => setOtherCallback((value) => !value)}>
+            <button type="button" className="mt-3 min-h-11 text-sm font-semibold text-[#5cba40] underline" onClick={() => setOtherCallback((value) => !value)}>
               {otherCallback ? "Use the account phone" : "Use a different callback"}
             </button>
             {otherCallback && (
@@ -211,9 +252,9 @@ function RequestScreen() {
           </>
         )}
 
-        {steps[step] === "Requester" && (
+        {steps[step] === "Contact" && !user && (
           <>
-            <p className="mb-3 text-sm text-[#c5d4cc]">A guest request needs your name and a callback number. SIH&S does not have an account to use.</p>
+            <p className="mb-3 text-sm text-[#6b7280]">A guest request needs your name and a callback number. SIH&S does not have an account to use.</p>
             <Field label="Name">
               <Input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" />
             </Field>
@@ -223,14 +264,20 @@ function RequestScreen() {
             <Field label="Organization, or Individual">
               <Input value={organization} onChange={(e) => setOrganization(e.target.value)} placeholder="Individual" />
             </Field>
-            <p className="mb-4 text-sm text-[#c5d4cc]">{SMS_CONSENT}</p>
+            <p className="mb-4 text-sm text-[#6b7280]">{SMS_CONSENT}</p>
           </>
         )}
 
-        {steps[step] === "What you need" && (
+        {steps[step] === "Details" && (
           <>
             <Field label="Requested work or items">
               <Textarea value={scope} onChange={(e) => setScope(e.target.value)} />
+            </Field>
+            <Field label="Appointment type">
+              <select className="min-h-11 w-full rounded-xl border border-border bg-card px-3" value={appointmentType} onChange={(e) => setAppointmentType(e.target.value as "in-office" | "mobile")}>
+                <option value="in-office">Office appointment</option>
+                <option value="mobile">Mobile appointment (we come to you)</option>
+              </select>
             </Field>
             <Field label="Preferred timing">
               <select className="min-h-11 w-full rounded-xl border border-border bg-card px-3" value={timing} onChange={(e) => setTiming(e.target.value)}>
@@ -248,7 +295,7 @@ function RequestScreen() {
           </>
         )}
 
-        {steps[step] === "Where" && (
+        {steps[step] === "Location" && (
           <>
             <h2 className="mb-2 text-base font-semibold">Where should we go</h2>
             {signedIn && locations.length > 0 && (
@@ -257,7 +304,7 @@ function RequestScreen() {
                   <button
                     key={place.id}
                     type="button"
-                    className="min-h-11 rounded-md border border-white/15 bg-[#06281f] px-3 text-sm font-semibold"
+                    className="min-h-11 rounded-md border border-[#e5e7eb] bg-white px-3 text-sm font-semibold"
                     onClick={() => {
                       setPropertyAddress(place.line);
                       setServiceLocation(place.entrance || place.pickup || "");
@@ -304,7 +351,7 @@ function RequestScreen() {
             )}
             {accuracy && <p className="mb-3 text-sm">{accuracy}</p>}
             <Field label="Property address">
-              <Input value={propertyAddress} onChange={(e) => { setPropertyAddress(e.target.value); setOutside(e.target.value.trim().length > 8 && !/delaware|\bde\b|wilmington|new castle/i.test(e.target.value)); }} placeholder="Street address in Delaware" />
+              <Input value={propertyAddress} onChange={(e) => { setPropertyAddress(e.target.value); setOutside(e.target.value.trim().length > 8 && !/delaware|\bde\b|wilmington|new castle/i.test(e.target.value)); }} placeholder="Street address" />
             </Field>
             <Field label="Actual service location">
               <Input value={serviceLocation} onChange={(e) => setServiceLocation(e.target.value)} placeholder="Service entrance, pickup point, or vehicle location" />
@@ -312,16 +359,25 @@ function RequestScreen() {
             <Field label="Access instructions">
               <Textarea value={accessNotes} onChange={(e) => setAccessNotes(e.target.value)} />
             </Field>
-            {(outside || (propertyAddress.trim().length > 8 && !inDelaware)) && (
-              <p className="mb-3 rounded-md border border-border bg-card p-3 text-sm">This location may be outside our Primary Service Area. SIH&S will review your request.</p>
+            {propertyAddress.trim().length > 8 && (
+              <p className="mb-3 rounded-md border border-border bg-card p-3 text-sm">Coverage depends on your service and contract. We will confirm availability.</p>
             )}
             {serviceSlug === "towing" && (
-              <p className="text-sm text-muted-foreground">SIH&S provides Delaware intrastate towing only. Interstate movements are coordinated through properly authorized carriers.</p>
+              <p className="text-sm text-muted-foreground">Coverage depends on your service and contract. We will confirm availability. Dispatch verifies contract eligibility before any job is dispatched.</p>
             )}
+            <p className="mt-3 text-sm">
+              <Link to="/incident" className="font-semibold text-[#5cba40]">Not sure / Need help</Link>
+              <span className="text-[#6b7280]"> — refer to the office by call, text, or message.</span>
+            </p>
           </>
         )}
 
-        {steps[step] === "Photos" && <MediaPicker items={files} onChange={setFiles} />}
+        {steps[step] === "Uploads" && (
+          <>
+            <p className="mb-3 text-sm text-[#6b7280]">Allowed files: JPG, PNG, or MP4. Up to 10 MB. Uploaded and Archived stay separate.</p>
+            <MediaPicker items={files} onChange={setFiles} />
+          </>
+        )}
 
         {steps[step] === "Details" && (
           <ServiceDetails
@@ -358,6 +414,13 @@ function RequestScreen() {
             incidentWhere={incidentWhere} setIncidentWhere={setIncidentWhere}
             vehicles={vehicles} setVehicles={setVehicles}
             onScene={onScene} setOnScene={setOnScene}
+            keysAccess={keysAccess} setKeysAccess={setKeysAccess}
+            drivetrain={drivetrain} setDrivetrain={setDrivetrain}
+            rolling={rolling} setRolling={setRolling}
+            equipment={equipment} setEquipment={setEquipment}
+            payer={payer} setPayer={setPayer}
+            supplyQty={supplyQty} setSupplyQty={setSupplyQty}
+            supplyUnit={supplyUnit} setSupplyUnit={setSupplyUnit}
             error=""
           />
         )}
@@ -369,14 +432,16 @@ function RequestScreen() {
               <p className="mt-1">{name} · {callback}</p>
               <p>{orgLabel}{po ? ` · PO ${po}` : ""}</p>
               <p className="mt-2">{scope || otherText || "No work description yet."}</p>
+              <p>Appointment: {appointmentType === "in-office" ? "Office appointment" : "Mobile appointment (we come to you)"}</p>
+              <p>Confirmed service site is shown after SIH&S confirms the booking.</p>
               <p>Preferred timing: {preferred}</p>
               <p>Property address: {propertyAddress || "Not entered"}</p>
               <p>Where the crew should go: {serviceLocation || "Not entered"}</p>
               <div className="mt-2 flex flex-wrap gap-x-4">
                 <button type="button" className="min-h-11 font-semibold text-accent-text underline" onClick={() => setStep(steps.indexOf("Service"))}>Edit service</button>
-                <button type="button" className="min-h-11 font-semibold text-accent-text underline" onClick={() => setStep(steps.indexOf(signedIn ? "Account" : "Requester"))}>Edit requester</button>
-                <button type="button" className="min-h-11 font-semibold text-accent-text underline" onClick={() => setStep(steps.indexOf("Where"))}>Edit place</button>
-                {!hideMedia && <button type="button" className="min-h-11 font-semibold text-accent-text underline" onClick={() => setStep(steps.indexOf("Photos"))}>Edit photos</button>}
+                <button type="button" className="min-h-11 font-semibold text-accent-text underline" onClick={() => setStep(steps.indexOf("Contact"))}>Edit contact</button>
+                <button type="button" className="min-h-11 font-semibold text-accent-text underline" onClick={() => setStep(steps.indexOf("Location"))}>Edit place</button>
+                {!hideMedia && <button type="button" className="min-h-11 font-semibold text-accent-text underline" onClick={() => setStep(steps.indexOf("Uploads"))}>Edit uploads</button>}
                 <button type="button" className="min-h-11 font-semibold text-accent-text underline" onClick={() => setStep(steps.indexOf("Details"))}>Edit details</button>
               </div>
             </article>
@@ -406,32 +471,17 @@ function RequestScreen() {
           </>
         )}
 
-        {steps[step] !== "Review" ? (
-          <Button type="button" full className="mt-4" onClick={next}>Continue</Button>
-        ) : (
-          <Button type="button" full className="mt-4" onClick={submit}>Submit Request</Button>
-        )}
+        <div className="mt-4 flex flex-col gap-2">
+          {steps[step] !== "Review" ? (
+            <Button type="button" full onClick={next}>Continue</Button>
+          ) : (
+            <Button type="button" full onClick={submit}>{submitting ? "Submitting..." : "Submit Request"}</Button>
+          )}
+          <Button type="button" variant="outline" full onClick={saveDraft}>Save draft</Button>
+        </div>
       </div>
     </div>
   );
-}
-
-function videoDuration(file: File) {
-  return new Promise<number>((resolve, reject) => {
-    const url = URL.createObjectURL(file);
-    const video = document.createElement("video");
-    video.preload = "metadata";
-    video.onloadedmetadata = () => {
-      const duration = video.duration;
-      URL.revokeObjectURL(url);
-      resolve(duration);
-    };
-    video.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error("unreadable"));
-    };
-    video.src = url;
-  });
 }
 
 function MediaPicker({ items, onChange }: { items: UploadItem[]; onChange: Dispatch<SetStateAction<UploadItem[]>> }) {
@@ -451,30 +501,15 @@ function MediaPicker({ items, onChange }: { items: UploadItem[]; onChange: Dispa
     const created: UploadItem[] = [];
     for (const file of incoming) {
       const id = `${kind}-${file.name}-${Date.now()}-${created.length}`;
-      let note: string | undefined;
-      let failed = false;
-      if (kind === "video") {
-        try {
-          const duration = await videoDuration(file);
-          if (duration > maxSeconds) {
-            failed = true;
-            note = `Longer than ${maxSeconds} seconds.`;
-          }
-        } catch {
-          failed = true;
-          note = "This clip could not be read.";
-        }
-      }
       created.push({
         id,
         name: file.name,
         kind,
-        status: failed ? "Failed" : "Uploading",
-        progress: failed ? 0 : 45,
+        status: "Uploading",
+        progress: 45,
         preview: URL.createObjectURL(file),
-        note,
       });
-      if (!failed) finish(id);
+      finish(id);
     }
     onChange((current) => [...current, ...created]);
   };
@@ -495,27 +530,27 @@ function MediaPicker({ items, onChange }: { items: UploadItem[]; onChange: Dispa
 
   return (
     <div>
-      <p className="text-sm text-[#c5d4cc]">
+      <p className="text-sm text-[#6b7280]">
         Add more than one photo, or short clips up to {maxSeconds} seconds. This step is optional. The request can still be received while files upload.
       </p>
       <div className="mt-4 grid grid-cols-2 gap-3">
         <button
           type="button"
           onClick={() => photoRef.current?.click()}
-          className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-[16px] border border-white/15 bg-[#06281f] px-3 text-center"
+          className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-lg border border-[#e5e7eb] bg-white px-3 text-center"
         >
-          <ImagePlus size={22} className="text-[#8fd86f]" aria-hidden />
-          <span className="text-sm font-semibold text-[#f4f7f5]">Add photos</span>
-          <span className="text-xs text-[#c5d4cc]">Camera or library</span>
+          <ImagePlus size={22} className="text-[#5cba40]" aria-hidden />
+          <span className="text-sm font-semibold text-[#171717]">Add photos</span>
+          <span className="text-xs text-[#6b7280]">Camera or library</span>
         </button>
         <button
           type="button"
           onClick={() => videoRef.current?.click()}
-          className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-[16px] border border-white/15 bg-[#06281f] px-3 text-center"
+          className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-lg border border-[#e5e7eb] bg-white px-3 text-center"
         >
-          <Video size={22} className="text-[#8fd86f]" aria-hidden />
-          <span className="text-sm font-semibold text-[#f4f7f5]">Add video</span>
-          <span className="text-xs text-[#c5d4cc]">Up to {maxSeconds} seconds</span>
+          <Video size={22} className="text-[#5cba40]" aria-hidden />
+          <span className="text-sm font-semibold text-[#171717]">Add video</span>
+          <span className="text-xs text-[#6b7280]">Up to {maxSeconds} seconds</span>
         </button>
       </div>
       <input
@@ -540,32 +575,32 @@ function MediaPicker({ items, onChange }: { items: UploadItem[]; onChange: Dispa
           e.target.value = "";
         }}
       />
-      <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-[#c5d4cc]">
+      <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-[#6b7280]">
         {items.length === 0 ? "No files yet" : `${photos} photo${photos === 1 ? "" : "s"} · ${videos} video${videos === 1 ? "" : "s"}`}
       </p>
       {items.length > 0 && (
         <ul className="mt-3 grid grid-cols-2 gap-3">
           {items.map((item) => (
-            <li key={item.id} className="overflow-hidden rounded-[16px] border border-white/15 bg-[#06281f]">
+            <li key={item.id} className="overflow-hidden rounded-lg border border-[#e5e7eb] bg-white">
               {item.kind === "photo" ? (
                 <img src={item.preview} alt="" className="h-28 w-full object-cover" />
               ) : (
-                <video src={item.preview} className="h-28 w-full bg-[#0c3328] object-cover" muted playsInline />
+                <video src={item.preview} className="h-28 w-full bg-[#f3f4f6] object-cover" muted playsInline />
               )}
               <div className="p-2">
-                <p className="truncate text-xs font-semibold text-[#f4f7f5]">{item.name}</p>
-                <p className="text-[11px] uppercase tracking-wide text-[#8fd86f]">{item.kind}</p>
-                <div className="mt-2 h-1 overflow-hidden rounded-full bg-[#0c3328]" aria-hidden>
-                  <div className="h-full bg-[#5fbb3f]" style={{ width: `${item.progress}%` }} />
+                <p className="truncate text-xs font-semibold text-[#171717]">{item.name}</p>
+                <p className="text-[11px] uppercase tracking-wide text-[#5cba40]">{item.kind}</p>
+                <div className="mt-2 h-1 overflow-hidden rounded-full bg-[#f3f4f6]" aria-hidden>
+                  <div className="h-full bg-[#5cba40]" style={{ width: `${item.progress}%` }} />
                 </div>
-                <p className="mt-1 text-xs text-[#c5d4cc]">{item.note ?? item.status}</p>
+                <p className="mt-1 text-xs text-[#6b7280]">{item.note ?? item.status}</p>
                 <div className="mt-1 flex gap-3">
                   {item.status === "Failed" && !item.note && (
-                    <button type="button" className="min-h-11 text-xs font-semibold text-[#8fd86f]" onClick={() => retry(item.id)}>
+                    <button type="button" className="min-h-11 text-xs font-semibold text-[#5cba40]" onClick={() => retry(item.id)}>
                       Retry
                     </button>
                   )}
-                  <button type="button" className="min-h-11 text-xs font-semibold text-[#f4f7f5]" onClick={() => remove(item.id)}>
+                  <button type="button" className="min-h-11 text-xs font-semibold text-[#171717]" onClick={() => remove(item.id)}>
                     Remove
                   </button>
                 </div>
@@ -612,6 +647,13 @@ function ServiceDetails(props: {
   incidentWhere: string; setIncidentWhere: (value: string) => void;
   vehicles: string; setVehicles: (value: string) => void;
   onScene: string; setOnScene: (value: string) => void;
+  keysAccess: string; setKeysAccess: (value: string) => void;
+  drivetrain: string; setDrivetrain: (value: string) => void;
+  rolling: string; setRolling: (value: string) => void;
+  equipment: string; setEquipment: (value: string) => void;
+  payer: string; setPayer: (value: string) => void;
+  supplyQty: string; setSupplyQty: (value: string) => void;
+  supplyUnit: string; setSupplyUnit: (value: string) => void;
   error: string;
 }) {
   if (VEHICLE_SLUGS.has(props.slug)) {
@@ -635,7 +677,6 @@ function ServiceDetails(props: {
         <Field label="Model">
           <Select
             value={props.model}
-            disabled={!props.make}
             onChange={(e) => props.setModel(e.target.value)}
           >
             <option value="">{props.make ? "Select model" : "Select a make first"}</option>
@@ -664,7 +705,7 @@ function ServiceDetails(props: {
         <Field label="Vehicle condition notes"><Textarea value={props.condition} onChange={(e) => props.setCondition(e.target.value)} placeholder="Missing wheels, steering problems, blocked location, travel lane, or shoulder" /></Field>
         <fieldset className="mb-4">
           <legend className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Authority to request</legend>
-          {["Registered owner", "Authorized agent of the owner", "Property owner or manager requesting removal"].map((item) => (
+          {["Registered owner", "Authorized agent of the owner", "Property owner or manager requesting removal", "I don't know"].map((item) => (
             <label key={item} className="mb-2 flex items-start gap-3 text-sm">
               <input type="radio" name="authority" className="mt-1" checked={props.authority === item} onChange={() => props.setAuthority(item)} />
               <span>{item}</span>
@@ -687,6 +728,57 @@ function ServiceDetails(props: {
               </div>
             )}
             <Field label="Destination"><Input value={props.destination} onChange={(e) => props.setDestination(e.target.value)} /></Field>
+            <Field label="Keys and access">
+              <select className="min-h-11 w-full rounded-xl border border-border bg-card px-3" value={props.keysAccess} onChange={(e) => props.setKeysAccess(e.target.value)}>
+                <option value="">Select</option>
+                <option>Yes</option>
+                <option>No</option>
+                <option>Unknown</option>
+                <option>I don't know</option>
+              </select>
+            </Field>
+            <Field label="Drivetrain">
+              <select className="min-h-11 w-full rounded-xl border border-border bg-card px-3" value={props.drivetrain} onChange={(e) => props.setDrivetrain(e.target.value)}>
+                <option value="">Select</option>
+                <option>FWD</option>
+                <option>RWD</option>
+                <option>AWD</option>
+                <option>4x4</option>
+                <option>Unknown</option>
+                <option>I don't know</option>
+              </select>
+            </Field>
+            <Field label="Rolling and steering">
+              <select className="min-h-11 w-full rounded-xl border border-border bg-card px-3" value={props.rolling} onChange={(e) => props.setRolling(e.target.value)}>
+                <option value="">Select</option>
+                <option>Rolls</option>
+                <option>Does not roll</option>
+                <option>Steering locked</option>
+                <option>Unknown</option>
+                <option>I don't know</option>
+              </select>
+            </Field>
+            <Field label="Equipment needed">
+              <select className="min-h-11 w-full rounded-xl border border-border bg-card px-3" value={props.equipment} onChange={(e) => props.setEquipment(e.target.value)}>
+                <option value="">Select</option>
+                <option>Flatbed</option>
+                <option>Wheel-lift</option>
+                <option>Dolly</option>
+                <option>Unknown</option>
+                <option>I don't know</option>
+              </select>
+            </Field>
+            <Field label="Payer">
+              <select className="min-h-11 w-full rounded-xl border border-border bg-card px-3" value={props.payer} onChange={(e) => props.setPayer(e.target.value)}>
+                <option value="">Select</option>
+                <option>Requesting customer</option>
+                <option>Organization</option>
+                <option>I don't know</option>
+              </select>
+            </Field>
+            {[props.keysAccess, props.drivetrain, props.rolling, props.equipment, props.payer, props.authority].some((value) => /don't know|unknown/i.test(value)) && (
+              <p className="mb-3 text-sm">Flagged for dispatch to confirm.</p>
+            )}
           </>
         )}
         {props.slug === "jump-starts" && <p className="text-sm text-muted-foreground">Add battery or hood access notes in the condition field.</p>}
@@ -703,20 +795,26 @@ function ServiceDetails(props: {
         <Field label="Pickup"><Input value={props.pickup} onChange={(e) => props.setPickup(e.target.value)} /></Field>
         <Field label="Testing or destination location"><Input value={props.testingStop} onChange={(e) => props.setTestingStop(e.target.value)} /></Field>
         <Field label="Return location"><Input value={props.returnStop} onChange={(e) => props.setReturnStop(e.target.value)} /></Field>
-        <Field label="Passenger name(s)"><Textarea value={props.passengers} onChange={(e) => props.setPassengers(e.target.value)} /></Field>
-        <p className="text-sm text-muted-foreground">Passengers are client employees, not SIH&S staff.</p>
+        <p className="text-sm">Passenger details are restricted.</p>
       </>
     );
   }
   if (props.slug === "drug-alcohol" || props.slug === "dna") {
     return (
       <>
-        <Field label="Program or test type"><Input value={props.program} onChange={(e) => props.setProgram(e.target.value)} placeholder="DOT, non-DOT, or DNA collection type" /></Field>
-        <Field label="Participants"><Textarea value={props.participants} onChange={(e) => props.setParticipants(e.target.value)} placeholder="Name and contact for each person" /></Field>
-        <Field label="Authorized recipients"><Textarea value={props.recipients} onChange={(e) => props.setRecipients(e.target.value)} /></Field>
-        <Field label="Designated laboratory (optional)"><Input value={props.laboratory} onChange={(e) => props.setLaboratory(e.target.value)} /></Field>
+        <p className="text-sm font-semibold">Ref TL-48K2</p>
+        <Field label="Operational reason">
+          <select className="min-h-11 w-full rounded-xl border border-[#e5e7eb] bg-[#f3f4f6] px-3" value={props.program} onChange={(e) => props.setProgram(e.target.value)}>
+            <option value="">Select a reason</option>
+            <option>Site not accessible</option>
+            <option>Reschedule requested</option>
+            <option>Provider delay</option>
+          </select>
+        </Field>
         <p className="text-sm">{LAB_DISCLOSURE}</p>
-        <p className="mt-2 text-sm text-muted-foreground">Do not enter medical or sensitive health information in this request. Required official program forms are completed during the collection.</p>
+        <p className="mt-2 text-sm">Codes and location/time records can still identify a person. Testing logistics are used only when privacy safeguards are confirmed by the office.</p>
+        <p className="mt-2 text-sm">Visit completion records describe the visit only, not sample collection, test validity, results, or regulatory compliance.</p>
+        <p className="mt-2 text-sm text-[#6b7280]">Photos, signatures, attachments, and free text are not used on this visit.</p>
       </>
     );
   }
@@ -725,24 +823,46 @@ function ServiceDetails(props: {
       <>
         <Field label="Number of documents"><Input value={props.documents} onChange={(e) => props.setDocuments(e.target.value)} /></Field>
         <Field label="Document category"><Input value={props.category} onChange={(e) => props.setCategory(e.target.value)} /></Field>
-        <p className="rounded-md border border-border bg-card p-3 text-sm">SIH&S provides Delaware mobile, in-person notary service only. Do not upload documents.</p>
+        <p className="rounded-md border border-border bg-card p-3 text-sm">Signatures captured in this app are not notarizations. Official notarial records are kept separately by the notary.</p>
         <p className="mt-2 text-sm text-muted-foreground">Do not enter medical or sensitive health information in this request.</p>
       </>
     );
   }
-  if (props.slug === "lawncare" || props.slug === "janitorial") {
+  if (props.slug === "lawncare" || props.slug === "janitorial" || props.slug === "cleaning" || props.slug === "lawn") {
     return (
       <>
-        <Field label="Areas to service"><Textarea value={props.areas} onChange={(e) => props.setAreas(e.target.value)} /></Field>
-        <Field label="Exclusions"><Textarea value={props.exclusions} onChange={(e) => props.setExclusions(e.target.value)} /></Field>
-        <Field label="No-photo areas"><Textarea value={props.noPhoto} onChange={(e) => props.setNoPhoto(e.target.value)} /></Field>
+        <fieldset className="mb-4">
+          <legend className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Areas and tasks</legend>
+          {["Lobby", "Restrooms", "Break room", "Mow front lawn", "Edge walkways", "Blow debris"].map((task) => (
+            <label key={task} className="mb-2 flex min-h-11 items-center gap-3 text-sm">
+              <input
+                type="checkbox"
+                className="h-5 w-5"
+                checked={props.areas.split(", ").includes(task)}
+                onChange={(e) => {
+                  const current = props.areas.split(", ").filter(Boolean);
+                  const next = e.target.checked ? [...current, task] : current.filter((item) => item !== task);
+                  props.setAreas(next.join(", "));
+                }}
+              />
+              <span>{task}</span>
+            </label>
+          ))}
+        </fieldset>
+        <Field label="Site notes"><Textarea value={props.exclusions} onChange={(e) => props.setExclusions(e.target.value)} /></Field>
       </>
     );
   }
   if (props.slug === "courier" || props.slug === "supplies") {
     return (
       <>
-        <Field label="Item list"><Textarea value={props.items} onChange={(e) => props.setItems(e.target.value)} placeholder="Name, quantity, specifications" /></Field>
+        {props.slug === "supplies" && (
+          <div className="mb-3 grid grid-cols-2 gap-2">
+            <Field label="Quantity"><Input inputMode="numeric" value={props.supplyQty} onChange={(e) => props.setSupplyQty(e.target.value)} /></Field>
+            <Field label="Unit"><Input value={props.supplyUnit} onChange={(e) => props.setSupplyUnit(e.target.value)} placeholder="each, box, case" /></Field>
+          </div>
+        )}
+        <Field label={props.slug === "supplies" ? "Delivery lines" : "Item list"}><Textarea value={props.items} onChange={(e) => props.setItems(e.target.value)} placeholder="Item name and delivery site" /></Field>
         <Field label="Substitutions allowed?">
           <select className="min-h-11 w-full rounded-xl border border-border bg-card px-3" value={props.substitutions} onChange={(e) => props.setSubstitutions(e.target.value)}>
             <option>No</option>

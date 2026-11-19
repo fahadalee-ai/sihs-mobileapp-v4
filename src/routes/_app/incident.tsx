@@ -1,8 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { CallHook, ScreenHeader } from "@/components/Chrome";
 import { Button, Field, Textarea } from "@/components/kit";
-import { PHONE_DISPLAY } from "@/lib/content";
+import { EMAIL, PHONE_DISPLAY, PHONE_TEL } from "@/lib/content";
 import { useApp } from "@/lib/store";
 
 export const Route = createFileRoute("/_app/incident")({
@@ -10,14 +10,13 @@ export const Route = createFileRoute("/_app/incident")({
   component: IncidentReport,
 });
 
-const TYPES = ["Service complaint", "Safety concern", "Property damage", "Vehicle accident", "Injury or illness", "Other"];
+const TYPES = ["Service complaint", "Safety concern at a job", "Property damage", "Billing question", "Other"];
 
 function IncidentReport() {
   const { submitIncident, incidents, bookings } = useApp();
   const [type, setType] = useState(TYPES[0]);
   const [details, setDetails] = useState("");
   const [requestId, setRequestId] = useState("");
-  const [error, setError] = useState("");
   const [ref, setRef] = useState("");
 
   return (
@@ -25,7 +24,15 @@ function IncidentReport() {
       <ScreenHeader title="Help" backTo="/profile" />
       <section className="px-4 pb-4">
         <h2 className="text-base font-semibold">How a request works</h2>
-        <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-[#c5d4cc]">
+        <p className="mt-2 text-sm text-[#6b7280]">Call, Text, and Email open your phone's own apps. In-app messages are sent through SIH&S.</p>
+        <div className="mt-3 grid grid-cols-3 gap-2">
+          <a href={`tel:${PHONE_TEL}`} className="inline-flex min-h-11 items-center justify-center rounded-md border border-[#e5e7eb] text-sm font-semibold">Call</a>
+          <a href={`sms:${PHONE_TEL}`} className="inline-flex min-h-11 items-center justify-center rounded-md border border-[#e5e7eb] text-sm font-semibold">Text</a>
+          <a href={`mailto:${EMAIL}?subject=SIH%26S%20inquiry`} className="inline-flex min-h-11 items-center justify-center rounded-md border border-[#e5e7eb] text-sm font-semibold">Email</a>
+        </div>
+        <Link to="/onboarding" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[#5cba40]">Replay tutorial</Link>
+        <Link to="/v2" search={{ view: "sms" }} className="mt-1 block min-h-11 text-sm font-semibold text-[#5cba40]">SMS sign-up</Link>
+        <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-[#6b7280]">
           <li>You submit a request. That does not dispatch a crew or confirm a time.</li>
           <li>SIH&S reviews it and calls the callback number on the request.</li>
           <li>A quote or deposit appears only after SIH&S confirms the request.</li>
@@ -34,23 +41,19 @@ function IncidentReport() {
       </section>
       <form
         className="px-4 pb-8"
+        noValidate
         onSubmit={(e) => {
           e.preventDefault();
-          if (!details.trim()) {
-            setError("Describe the concern.");
-            return;
-          }
-          setError("");
           setRef(submitIncident({ type, details: details.trim(), restricted: false, requestId }));
         }}
       >
-        <div className="mb-4 rounded-[16px] border border-white/15 bg-[#06281f] p-4">
+        <div className="mb-4 rounded-lg border border-[#e5e7eb] bg-white p-4">
           <p className="text-sm font-semibold">If anyone is in danger, call 911 first.</p>
           <div className="mt-2">
             <CallHook />
           </div>
         </div>
-        <Field label="Category" error={error || undefined}>
+        <Field label="Category">
           <select className="min-h-11 w-full rounded-xl border border-border bg-card px-3" value={type} onChange={(e) => setType(e.target.value)}>
             {TYPES.map((item) => (
               <option key={item}>{item}</option>

@@ -13,12 +13,7 @@ function Verify() {
   const { pendingEmail, verifyCode, verifyEmail } = useApp();
   const navigate = useNavigate();
   const [code, setCode] = useState("");
-  const [error, setError] = useState("");
   const [seconds, setSeconds] = useState(30);
-
-  useEffect(() => {
-    if (!pendingEmail) navigate({ to: "/signup" });
-  }, [pendingEmail, navigate]);
 
   useEffect(() => {
     if (seconds <= 0) return;
@@ -27,43 +22,39 @@ function Verify() {
   }, [seconds]);
 
   return (
-    <div className="theme-dark min-h-dvh bg-brand text-white">
+    <div className="min-h-dvh bg-white text-[#171717]">
       <ScreenHeader title="Verify Email" backTo="/signup" dark />
       <form
         className="px-5"
+        noValidate
         onSubmit={(e) => {
           e.preventDefault();
-          if (!verifyEmail(code)) {
-            setError("Enter the 6-digit code.");
-            return;
-          }
+          verifyEmail(code);
           navigate({ to: "/ready" });
         }}
       >
-        <p className="mb-4 text-sm text-[#c5d4cc]">Enter the 6-digit code sent to {pendingEmail}.</p>
+        <p className="mb-4 text-sm text-[#6b7280]">Enter the 6-digit code sent to {pendingEmail}.</p>
         {verifyCode && (
-          <p className="mb-4 rounded-md border border-white/20 bg-white/5 px-3 py-2 text-sm">
+          <p className="mb-4 rounded-md border border-[#e5e7eb] bg-[#f3f4f6] px-3 py-2 text-sm">
             Prototype code: <span className="font-semibold">{verifyCode}</span>
           </p>
         )}
-        <Field label="Verification code" error={error || undefined}>
+        <Field label="Verification code">
           <Input
-            inputMode="numeric"
+            inputMode="text"
             autoComplete="one-time-code"
-            maxLength={6}
             value={code}
-            onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+            onChange={(e) => setCode(e.target.value)}
             placeholder="000000"
           />
         </Field>
-        <Button type="submit" full disabled={code.length !== 6}>
+        <Button type="submit" full>
           Verify
         </Button>
         <button
           type="button"
-          disabled={seconds > 0}
           onClick={() => setSeconds(30)}
-          className="mt-4 min-h-11 text-sm font-semibold text-[#8fd86f] disabled:text-[#c5d4cc]"
+          className="mt-4 min-h-11 text-sm font-semibold text-[#5cba40]"
         >
           {seconds > 0 ? `Resend in ${seconds}s` : "Resend code"}
         </button>

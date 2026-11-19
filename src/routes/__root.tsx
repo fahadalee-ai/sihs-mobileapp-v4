@@ -91,11 +91,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "SIH&S — structured incident response for Northern New Castle County, Delaware. Delaware intrastate towing, collections, DNA services, PIM-VEE™, and notary.",
+          "SIH&S — structured incident response, towing and roadside, collections, DNA services, PIM-VEE™, and notary.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "theme-color", content: "#001e16" },
+      { name: "theme-color", content: "#ffffff" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

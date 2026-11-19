@@ -2,7 +2,7 @@ export const PHONE_DISPLAY = "302-406-HOOK";
 export const PHONE_TEL = "+13024064665";
 export const HQ =
   "1201 N. Orange St., Suite 7724, Wilmington, DE 19801";
-export const SERVICE_AREA = "Northern New Castle County, DE";
+export const SERVICE_AREA = "Coverage by contract";
 export const EMAIL = "sihs@susanshooks.com";
 
 export const SMS_CONSENT =
@@ -12,7 +12,7 @@ export const PATENT_FOOTNOTE =
   "U.S. Patent Pending refers to pending U.S. patent application(s) related to integrated workflow controls and is not a guarantee of patent grant.";
 
 export const LAB_DISCLOSURE =
-  "SIH&S performs specimen collection only. Laboratory analysis and MRO review are conducted by accredited third parties.";
+  "SIH&S performs specimen collection only. Laboratory analysis is conducted by accredited third parties.";
 
 export const DNA_LAB_DISCLOSURE =
   "SIH&S performs specimen collection only. Laboratory analysis is conducted by accredited third parties.";
@@ -42,24 +42,24 @@ export type Service = {
   pricing: string;
   hero: "tow" | "lock" | "jump" | "fuel" | "vial" | "dna" | "docs" | "notary";
   prominent?: boolean;
+  hidden?: boolean;
+  ineligible?: boolean;
 };
 
 export const SERVICES: Service[] = [
   {
     slug: "towing",
-    title: "Delaware Intrastate Towing",
+    title: "Towing & Roadside",
     short: "Towing",
-    descriptor: "Light-duty vehicle towing inside Delaware.",
+    descriptor: "Light-duty, consensual towing, including an authorized secondary tow.",
     kind: "dispatch",
     hero: "tow",
     description:
       "SIH&S provides qualifying light-duty towing, accident- and incident-related towing, and vehicle relocation. Each request remains subject to vehicle condition, location, access, roadway safety, availability, and final confirmation. Initial pricing and the required deposit are confirmed before dispatch for direct customer-pay calls. Additional charges may apply if the vehicle, pickup or destination, mileage, access, waiting time, tolls, service requirements, or actual conditions differ from the information provided. Third-party reimbursement is not guaranteed. Vehicle-only service — passenger transport is not offered.",
     included: [
-      "PRIMARY SERVICE AREA: Northern New Castle County, DE",
-      "Delaware intrastate towing only.",
-      "Interstate movements coordinated through properly authorized carriers.",
-      "Private-pay requests generally within an 18-mile radius of 1201 N. Orange St., Suite 7724, Wilmington, DE 19801.",
-      "The headquarters address defines the advertised retail radius and is not automatically the truck’s dispatch origin.",
+      "Light-duty, consensual towing only, including an authorized secondary tow.",
+      "Coverage depends on your service and contract. We will confirm availability.",
+      "Dispatch verifies contract eligibility before any job is dispatched.",
       "Vehicle-only pricing. No passenger transport.",
     ],
     pricing: PRICING_DISPATCH,
@@ -68,14 +68,15 @@ export const SERVICES: Service[] = [
     slug: "lockouts",
     title: "Lockouts",
     short: "Lockouts",
-    descriptor: "Vehicle lockout assistance in the service area.",
+    descriptor: "Authorized U-Haul assignments only.",
+    hidden: true,
     kind: "dispatch",
     hero: "lock",
     description:
-      "SIH&S provides vehicle lockout assistance for qualifying light-duty vehicles in the Northern New Castle County service area. Service is subject to vehicle condition, location, access, roadway safety, staffing, and final confirmation. This is vehicle access assistance only.",
+      "Lockout service is available only for authorized U-Haul assignments. Enter the assignment number and verify contract eligibility before the request can be submitted. Dispatch verifies contract eligibility before any job is dispatched.",
     included: [
-      "Northern New Castle County, Delaware service area.",
-      "Delaware intrastate response only.",
+      "Coverage depends on your service and contract. We will confirm availability.",
+      "Coverage depends on your service and contract. We will confirm availability.",
       "Quote confirmed before dispatch.",
       "Vehicle-only service.",
     ],
@@ -92,8 +93,8 @@ export const SERVICES: Service[] = [
       "SIH&S provides jump-start assistance for drivers who need help with a dead battery. Roadside requests are subject to location, access, vehicle condition, staffing, and final confirmation. Pricing and any required deposit are confirmed before dispatch.",
     included: [
       "Jump-start assistance for qualifying light-duty vehicles.",
-      "Northern New Castle County, Delaware service area.",
-      "Delaware intrastate response only.",
+      "Coverage depends on your service and contract. We will confirm availability.",
+      "Coverage depends on your service and contract. We will confirm availability.",
       "Availability depends on staffing, location, and dispatch capacity.",
     ],
     pricing: PRICING_DISPATCH,
@@ -109,8 +110,8 @@ export const SERVICES: Service[] = [
       "SIH&S provides emergency fuel delivery for drivers who need fuel at the vehicle. Requests are subject to location, access, roadway safety, product availability, staffing, and final confirmation. Pricing and any required deposit are confirmed before dispatch.",
     included: [
       "Fuel delivered to the vehicle location.",
-      "Northern New Castle County, Delaware service area.",
-      "Delaware intrastate response only.",
+      "Coverage depends on your service and contract. We will confirm availability.",
+      "Coverage depends on your service and contract. We will confirm availability.",
       "Quote confirmed before dispatch.",
     ],
     pricing: PRICING_DISPATCH,
@@ -123,7 +124,7 @@ export const SERVICES: Service[] = [
     kind: "appointment",
     hero: "vial",
     description:
-      "SIH&S provides authorized DOT and non-DOT urine specimen collection and breath-alcohol testing. In-office services are provided by appointment. Mobile services are available by appointment, subject to availability. The employer, consortium/third-party administrator, agency, or requesting authority remains responsible for the correct test, reason, panel, authority, and program requirements. For DOT urine testing, HHS-certified laboratories perform analysis and confirmation testing, and qualified Medical Review Officers review results when applicable. SIH&S maintains chain-of-custody procedures for the collection it performs.",
+      "SIH&S provides authorized DOT and non-DOT urine specimen collection and breath-alcohol testing. In-office services are provided by appointment. Mobile services are available by appointment, subject to availability. The employer, consortium/third-party administrator, agency, or requesting authority remains responsible for the correct test, reason, panel, authority, and program requirements. SIH&S maintains chain-of-custody procedures for the collection it performs.",
     included: [
       "In-office collection by appointment.",
       "Mobile collection by appointment and availability.",
@@ -143,10 +144,10 @@ export const SERVICES: Service[] = [
     hero: "dna",
     prominent: true,
     description:
-      "SIH&S provides legal and non-legal DNA specimen collection using documented identity-verification and chain-of-custody procedures. Collection types may include paternity, grandparent, siblingship, avuncular, and immigration, subject to laboratory and case requirements. These collection types are informational only and are not a guarantee of laboratory or agency acceptance. The designated third-party laboratory performs analysis. Accreditation, documentation, and acceptance requirements depend on the test and receiving organization. In-office collection is available by appointment in Wilmington. Mobile collection may be available by appointment within the accepted mobile service area.",
+      "SIH&S provides legal and non-legal DNA specimen collection using documented identity-verification and chain-of-custody procedures. Collection types may include paternity, grandparent, siblingship, avuncular, and immigration, subject to laboratory and case requirements. These collection types are informational only and are not a guarantee of laboratory or agency acceptance. The designated third-party laboratory performs analysis. Accreditation, documentation, and acceptance requirements depend on the test and receiving organization. Office and mobile appointments may be available. Coverage depends on your service and contract. We will confirm availability.",
     included: [
       "Paternity, grandparent, siblingship, avuncular, and immigration collections — subject to lab and case requirements.",
-      "In-office collection by appointment in Wilmington.",
+      "Office or mobile appointment, after the office confirms availability.",
       "Mobile collection by appointment, subject to availability.",
       "Identity verification and chain-of-custody documentation for the collection SIH&S performs.",
       "SIH&S is not a medical provider and does not confirm pregnancy, gestational age, fetal health, or medical suitability.",
@@ -178,14 +179,81 @@ export const SERVICES: Service[] = [
     kind: "appointment",
     hero: "notary",
     description:
-      "SIH&S provides mobile notary services by appointment. The administrative office at 1201 N. Orange St., Suite 7724, Wilmington, DE 19801 is an appointment-only office. No walk-in notary service is available there. The signer must appear, present acceptable identification, and sign in the notary’s presence. Availability depends on staffing, location, and scheduling. SIH&S does not provide legal advice.",
+      "SIH&S provides in-person notary services by appointment. The signer must appear, present acceptable identification, and sign in the notary’s presence. Signatures captured in this app are not notarizations. Official notarial records are kept separately by the notary. SIH&S does not provide legal advice.",
     included: [
       "Mobile notary by appointment.",
-      "Northern New Castle County, Delaware.",
+      "Coverage depends on your service and contract. We will confirm availability.",
       "Acceptable identification required.",
       "No walk-in notary at the administrative office.",
     ],
     pricing: PRICING_APPOINTMENT,
+  },
+  {
+    slug: "courier",
+    title: "Courier / Transport",
+    short: "Courier",
+    descriptor: "Package or item movement between sites.",
+    kind: "dispatch",
+    hero: "docs",
+    description: "Move a package or item between named sites. Passenger details are not collected.",
+    included: ["Pickup and drop locations.", "Item ID and quantity.", "Coverage depends on your service and contract. We will confirm availability."],
+    pricing: PRICING_DISPATCH,
+  },
+  {
+    slug: "cleaning",
+    title: "Cleaning",
+    short: "Cleaning",
+    descriptor: "Area and task cleaning at a site.",
+    kind: "appointment",
+    hero: "docs",
+    description: "Select the areas and tasks for the site. Each visit is its own record.",
+    included: ["Area and task checklist.", "Site notes.", "Coverage depends on your service and contract. We will confirm availability."],
+    pricing: PRICING_APPOINTMENT,
+  },
+  {
+    slug: "lawn",
+    title: "Lawn / Property Work",
+    short: "Lawn",
+    descriptor: "Grounds tasks at a site.",
+    kind: "appointment",
+    hero: "docs",
+    description: "Select the grounds tasks and add site notes. Recurring visits stay separate.",
+    included: ["Task checklist.", "Site notes.", "Coverage depends on your service and contract. We will confirm availability."],
+    pricing: PRICING_APPOINTMENT,
+  },
+  {
+    slug: "supplies",
+    title: "Supplies",
+    short: "Supplies",
+    descriptor: "Delivery lines with quantity and unit.",
+    kind: "dispatch",
+    hero: "docs",
+    description: "Request item lines, quantity, unit, and a delivery site.",
+    included: ["Item, quantity, and unit.", "Delivery site.", "Coverage depends on your service and contract. We will confirm availability."],
+    pricing: PRICING_DISPATCH,
+  },
+  {
+    slug: "other",
+    title: "Other Contracted Services",
+    short: "Other",
+    descriptor: "Work that is not in the list above.",
+    kind: "dispatch",
+    hero: "docs",
+    description: "Describe the contracted work. Lockout is not accepted in this field.",
+    included: ["Your description.", "Coverage depends on your service and contract. We will confirm availability."],
+    pricing: PRICING_DISPATCH,
+  },
+  {
+    slug: "heavy",
+    title: "Specialized heavy equipment",
+    short: "Heavy",
+    descriptor: "Not available for your account or location.",
+    kind: "dispatch",
+    hero: "tow",
+    ineligible: true,
+    description: "Not available for your account or location. Contact the office.",
+    included: ["Contact the office if you believe this should be on your contract."],
+    pricing: PRICING_DISPATCH,
   },
 ];
 
@@ -214,12 +282,12 @@ export const LEGAL: Record<LegalId, { title: string; paragraphs: string[] }> = {
     paragraphs: [
       "These terms govern services requested from Susan's Intercessory Hooks & Services LLC, doing business as SIH&S (\"SIH&S\").",
       "Public-facing services are offered under the name SIH&S. The legal entity is Susan's Intercessory Hooks & Services LLC.",
-      "Primary service area: Northern New Castle County, Delaware. Delaware intrastate towing only. Interstate movements are coordinated through properly authorized carriers.",
-      "SIH&S generally accepts direct private-pay towing and roadside requests within an 18-mile radius of 1201 N. Orange St., Suite 7724, Wilmington, DE 19801. That address is an administrative office. It is not a tow yard, vehicle-storage lot, repair facility, or walk-in vehicle-release location.",
+      "Coverage depends on your service and contract. We will confirm availability.",
+      "Coverage depends on your service and contract. We will confirm availability. The mailing address is an administrative office. It is not a tow yard, vehicle-storage lot, repair facility, or walk-in vehicle-release location.",
       "All pricing is confirmed prior to deposit. A deposit is required before scheduling or dispatch. Final price for towing and roadside service depends on location, access, and conditions. The quote is confirmed before dispatch.",
       "Submitting a request in this app is a service inquiry until SIH&S accepts it. It does not by itself dispatch a truck, reserve an appointment, confirm an ETA, or create a payment obligation.",
       "Cancellation and refunds. Refund eligibility is determined by SIH&S in accordance with these Full Terms & Agreement. A cancellation does not automatically produce a refund. If a deposit was collected and dispatch had occurred, the deposit is earned upon dispatch (non-refundable to the extent permitted by law).",
-      "SIH&S performs specimen collection only for drug, alcohol, and DNA services. Laboratory analysis and MRO review are conducted by accredited third parties. No compliance guarantee is provided by SIH&S.",
+      "SIH&S performs specimen collection only for drug, alcohol, and DNA services. Laboratory analysis is conducted by accredited third parties. No compliance guarantee is provided by SIH&S.",
       "PIM-VEE™ means Post-Incident Motor Vehicle Coordination & Documentation Services (\"PIMVCDS\"). It is employer-directed, non-investigative, and does not include scene control or evidence handling. SIH&S does not provide accident investigation, fault determination, causation analysis, or accident reconstruction.",
       "Where an integrated workflow is offered, the names are HOOK & TEST™ — U.S. Patent Pending and HOOK & PIM-VEE™ — U.S. Patent Pending. U.S. Patent Pending refers to pending U.S. patent application(s) related to integrated workflow controls and is not a guarantee of patent grant. Patent language does not apply to standalone Towing, standalone DNA, standalone Testing, or standalone PIM-VEE™.",
       "Availability varies by service, staffing, location, and dispatch capacity. SIH&S is on call 24/7 to receive service requests, including nights, weekends, and holidays. Actual dispatch and appointment availability depend on operating conditions.",

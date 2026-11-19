@@ -40,7 +40,7 @@ function OrganizationAccess() {
         <Field label="Note">
           <Textarea value={note} onChange={(e) => setNote(e.target.value)} />
         </Field>
-        <Button type="submit" full disabled={pending}>Submit request</Button>
+        <Button type="submit" full>Submit request</Button>
         {pending && <p className="mt-4 text-sm font-semibold" role="status">Pending SIH&S verification.</p>}
       </form>
     </div>

@@ -44,9 +44,9 @@ function AppLayout() {
   const showTabs = TAB_PATHS.includes(pathname);
 
   return (
-    <div className="theme-dark mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-[#001e16] text-[#f4f7f5]">
+    <div className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-white text-[#171717]">
       {offline && (
-        <p className="bg-[#5fbb3f] px-4 py-2 text-center text-sm font-semibold text-[#001e16]" role="status">
+        <p className="bg-[#5cba40] px-4 py-2 text-center text-sm font-semibold text-white" role="status">
           You are offline. Drafts stay on this device and submit when the connection returns. Call SIH&S if this is urgent.
         </p>
       )}
