@@ -11,9 +11,9 @@ function Revoked() {
   const { logout } = useApp();
   const navigate = useNavigate();
   return (
-    <div className="flex min-h-dvh flex-col bg-white px-6 py-10 text-[#171717]">
+    <div className="auth-screen flex min-h-dvh flex-col bg-[#001e16] px-6 py-10 text-white">
       <h1 className="text-2xl font-semibold">Your access to this organization has ended.</h1>
-      <p className="mt-3 text-sm leading-relaxed text-[#6b7280]">
+      <p className="mt-3 text-sm leading-relaxed text-[#d5e6dc]">
         Contact SIH&S if you believe this is an error. Property and organization records are no longer shown.
       </p>
       <div className="mt-6">

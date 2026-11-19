@@ -22,7 +22,7 @@ function Verify() {
   }, [seconds]);
 
   return (
-    <div className="min-h-dvh bg-white text-[#171717]">
+    <div className="auth-screen min-h-dvh bg-[#001e16] text-white">
       <ScreenHeader title="Verify Email" backTo="/signup" dark />
       <form
         className="px-5"
@@ -33,9 +33,9 @@ function Verify() {
           navigate({ to: "/ready" });
         }}
       >
-        <p className="mb-4 text-sm text-[#6b7280]">Enter the 6-digit code sent to {pendingEmail}.</p>
+        <p className="mb-4 text-sm text-[#d5e6dc]">Enter the 6-digit code sent to {pendingEmail}.</p>
         {verifyCode && (
-          <p className="mb-4 rounded-md border border-[#e5e7eb] bg-[#f3f4f6] px-3 py-2 text-sm">
+          <p className="mb-4 rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm">
             Prototype code: <span className="font-semibold">{verifyCode}</span>
           </p>
         )}

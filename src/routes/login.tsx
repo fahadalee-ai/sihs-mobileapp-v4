@@ -20,10 +20,10 @@ function Login() {
   const [remember, setRemember] = useState(true);
 
   return (
-    <div className="flex min-h-dvh flex-col bg-white px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))] text-[#171717]">
+    <div className="auth-screen flex min-h-dvh flex-col bg-[#001e16] px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))] text-white">
       <BrandLogo size="md" />
       <h1 className="mt-6 text-2xl font-semibold">Welcome Back</h1>
-      <p className="mt-1 text-sm text-[#6b7280]">Sign in to access your services.</p>
+      <p className="mt-1 text-sm text-[#d5e6dc]">Sign in to access your services.</p>
       <form
         className="mt-6"
         noValidate
@@ -85,7 +85,7 @@ function Login() {
         >
           Continue as guest to request a service
         </Button>
-        <Link to="/two-factor" className="mt-3 flex min-h-11 items-center justify-center gap-2 rounded-md border border-[#e5e7eb] text-sm font-semibold">
+        <Link to="/two-factor" className="mt-3 flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/30 text-sm font-semibold">
           Use Face ID / Fingerprint
           <DemoBadge />
         </Link>
@@ -93,7 +93,7 @@ function Login() {
           Accept an invitation
         </Link>
       </form>
-      <p className="mt-4 text-center text-sm text-[#6b7280]">
+      <p className="mt-4 text-center text-sm text-[#d5e6dc]">
         New to SIH&S?{" "}
         <Link to="/signup" className="font-semibold text-[#5cba40] underline">
           Sign Up

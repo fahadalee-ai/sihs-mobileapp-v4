@@ -54,7 +54,7 @@ export function ScreenHeader({
   const router = useRouter();
   const canGoBack = useCanGoBack();
   return (
-    <header className="sticky top-0 z-30 flex items-center gap-2 border-b border-[#eeeeee] bg-white px-3 pt-[max(0.5rem,env(safe-area-inset-top))] pb-3 text-[#171717]">
+    <header className={`sticky top-0 z-30 flex items-center gap-2 border-b px-3 pt-[max(0.5rem,env(safe-area-inset-top))] pb-3 ${dark ? "border-white/15 bg-[#001e16] text-white" : "border-[#eeeeee] bg-white text-[#171717]"}`}>
       <button
         type="button"
         aria-label="Go back"

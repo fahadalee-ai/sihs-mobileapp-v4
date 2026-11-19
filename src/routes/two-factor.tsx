@@ -15,8 +15,8 @@ function TwoFactor() {
   const [sent, setSent] = useState(false);
   const [alt, setAlt] = useState(false);
   return (
-    <div className="min-h-dvh bg-white text-[#171717]">
-      <ScreenHeader title="Verification code" backTo="/login" />
+    <div className="auth-screen min-h-dvh bg-[#001e16] text-white">
+      <ScreenHeader title="Verification code" backTo="/login" dark />
       <form
         className="px-5 pb-10"
         onSubmit={(e) => {
@@ -28,7 +28,7 @@ function TwoFactor() {
           <DemoBadge />
           <SampleTag />
         </div>
-        <p className="text-sm text-[#6b7280]">
+        <p className="text-sm text-[#d5e6dc]">
           Enter the 6-digit code before a privileged action, such as a facility manager approving a released record or changing site authority.
         </p>
         <Field label="6-digit code">

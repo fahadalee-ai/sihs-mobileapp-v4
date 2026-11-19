@@ -24,9 +24,9 @@ function PendingAccount() {
   };
 
   return (
-    <div className="flex min-h-dvh flex-col bg-white px-6 py-10 text-[#171717]">
+    <div className="auth-screen flex min-h-dvh flex-col bg-[#001e16] px-6 py-10 text-white">
       <h1 className="text-2xl font-semibold">Account pending SIH&S approval</h1>
-      <p className="mt-3 text-sm leading-relaxed text-[#6b7280]">
+      <p className="mt-3 text-sm leading-relaxed text-[#d5e6dc]">
         {user?.fullName ? `${user.fullName}, your` : "Your"} account is created. SIH&S reviews the request before the home screen opens.
       </p>
       <div className="mt-6">

@@ -51,6 +51,10 @@
   #5cba40 on #ffffff is used for links and small green text.
   White labels sit on #5cba40 buttons, matching the reference screens.
 */
+.auth-screen {
+  --muted-foreground: #d5e6dc;
+}
+
 :root {
   --radius: 8px;
   --brand: #ffffff;

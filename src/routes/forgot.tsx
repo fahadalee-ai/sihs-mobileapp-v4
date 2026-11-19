@@ -16,11 +16,11 @@ function Forgot() {
   const [step, setStep] = useState(0);
   const [code, setCode] = useState("");
   return (
-    <div className="min-h-dvh bg-white text-[#171717]">
-      <ScreenHeader title="Secure recovery" backTo="/login" />
+    <div className="auth-screen min-h-dvh bg-[#001e16] text-white">
+      <ScreenHeader title="Secure recovery" backTo="/login" dark />
       <div className="px-5 pb-10">
         <SampleTag />
-        <p className="mt-2 text-sm text-[#6b7280]">
+        <p className="mt-2 text-sm text-[#d5e6dc]">
           Step {step + 1} of {STEPS.length}: {STEPS[step]}
         </p>
         {step === 0 && (

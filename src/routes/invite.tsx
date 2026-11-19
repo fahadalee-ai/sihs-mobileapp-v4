@@ -13,8 +13,8 @@ function Invite() {
   const navigate = useNavigate();
   const [done, setDone] = useState(false);
   return (
-    <div className="min-h-dvh bg-white text-[#171717]">
-      <ScreenHeader title="Invitation" backTo="/login" />
+    <div className="auth-screen min-h-dvh bg-[#001e16] text-white">
+      <ScreenHeader title="Invitation" backTo="/login" dark />
       <form
         className="space-y-2 px-5 pb-10"
         onSubmit={(e) => {
@@ -24,7 +24,7 @@ function Invite() {
       >
         <SampleTag />
         <h1 className="text-2xl font-semibold">You've been invited by Sample Facilities Co.</h1>
-        <p className="text-sm text-[#6b7280]">Confirm the organization and role, then set a password.</p>
+        <p className="text-sm text-[#d5e6dc]">Confirm the organization and role, then set a password.</p>
         <Field label="Organization">
           <Input defaultValue="Sample Facilities Co." readOnly />
         </Field>

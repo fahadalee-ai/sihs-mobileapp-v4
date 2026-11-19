@@ -22,7 +22,7 @@ function SignUp() {
   const [sms, setSms] = useState(false);
 
   return (
-    <div className="min-h-dvh bg-white text-[#171717]">
+    <div className="auth-screen min-h-dvh bg-[#001e16] text-white">
       <ScreenHeader title="Sign Up" backTo="/login" dark />
       <form
         className="px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
