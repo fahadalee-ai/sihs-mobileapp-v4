@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, useNavigate, useRouterState } from "@tanstack/
 import { useEffect, useState } from "react";
 import { TabBar, Toasts } from "@/components/Chrome";
 import { hasSeenSplash } from "@/lib/intro";
+import { readStorage } from "@/lib/storage";
 import { useApp } from "@/lib/store";
 
 export const Route = createFileRoute("/_app")({
@@ -25,8 +26,13 @@ function AppLayout() {
       navigate({ to: "/pending" });
       return;
     }
-    if (!onboarded) navigate({ to: "/onboarding" });
-    else if (!user && !guest) navigate({ to: "/login" });
+    // Login writes the session before navigation. React state can still be the
+    // signed-out value on the first home render, which used to bounce back to login.
+    const signedIn = Boolean(user) || Boolean(readStorage("session"));
+    const asGuest = guest || readStorage("guest") === "1";
+    const finishedIntro = onboarded || readStorage("onboarded") === "1";
+    if (!finishedIntro) navigate({ to: "/onboarding" });
+    else if (!signedIn && !asGuest) navigate({ to: "/login" });
   }, [onboarded, user, guest, navigate]);
 
   const [offline, setOffline] = useState(false);

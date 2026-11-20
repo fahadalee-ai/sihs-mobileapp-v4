@@ -410,8 +410,8 @@ function loadScopedLocations(userId: string | null, isGuest: boolean): SavedLoca
 }
 
 function withDefaultLogin(list: User[]): User[] {
-  const email = "admin@gamil.com";
-  const password = "123456";
+  const email = SEED_USER.email;
+  const password = SEED_USER.password;
   const match = list.find((item) => item.email.toLowerCase() === email || item.id === "u-demo");
   const next = match
     ? list.map((item) =>

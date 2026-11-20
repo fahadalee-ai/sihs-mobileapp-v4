@@ -44,6 +44,7 @@ export function TabBar() {
 export function ScreenHeader({
   title,
   backTo = "/home",
+  dark,
   menu,
 }: {
   title: string;
